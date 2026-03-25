@@ -3,15 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductoResource\Pages;
-use App\Filament\Resources\ProductoResource\RelationManagers;
 use App\Models\Producto;
+use App\Models\Categoria; 
+use App\Models\Marca;    
+use Illuminate\Support\Str; 
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductoResource extends Resource
 {
@@ -27,26 +27,33 @@ class ProductoResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('codigo')
-                    ->label('Código de Venta (SKU)')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->placeholder('Ej. MS-382, BOM-123')
-                    ->maxLength(255),
-
-                // ¡AQUÍ ESTÁ LA CORRECCIÓN! (Antes decía 'codigo')
                 Forms\Components\Select::make('categoria_id')
                     ->relationship('categoria', 'nombre')
                     ->label('Categoria')
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                        self::generarSKU($set, $get);
+                    }),
 
                 Forms\Components\Select::make('marca_id')
-                    ->relationship('marca','nombre')
+                    ->relationship('marca', 'nombre')
                     ->label('Marca')
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->live()
+                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                        self::generarSKU($set, $get);
+                    }),
+
+                Forms\Components\TextInput::make('codigo')
+                    ->label('Código de Venta (SKU)')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255)
+                    ->helperText('Código autogenerado basado en Categoría y Marca (Ej. MOT-STI-4829). Puedes editarlo manualmente si lo deseas.'),
 
                 Forms\Components\TextInput::make('precio')
                     ->numeric()
@@ -62,6 +69,7 @@ class ProductoResource extends Resource
 
                 Forms\Components\FileUpload::make('imagen')
                     ->image()
+                    ->disk('public') 
                     ->directory('productos')
                     ->label('Imagen del Producto') 
                     ->columnSpanFull(),   
@@ -75,8 +83,29 @@ class ProductoResource extends Resource
                     ->label('Link de Ficha Técnica (Google Drive / Web oficial)')
                     ->url()
                     ->placeholder('Ej: https://drive.google.com/file/d/....')
-                    ->maxLength(255),
-                            ]);
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+            ]);
+    }
+
+    public static function generarSKU(Forms\Set $set, Forms\Get $get)
+    {
+        $categoriaId = $get('categoria_id');
+        $marcaId = $get('marca_id');
+
+        if (!$categoriaId) {
+            return; 
+        }
+
+        $categoria = Categoria::find($categoriaId);
+        $marca = $marcaId ? Marca::find($marcaId) : null;
+
+        $prefijoCat = $categoria ? Str::upper(Str::substr($categoria->nombre, 0, 3)) : 'GEN';
+        $prefijoMar = $marca ? Str::upper(Str::substr($marca->nombre, 0, 3)) : 'GEN';
+        
+        $numero = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+        $set('codigo', "{$prefijoCat}-{$prefijoMar}-{$numero}");
     }
 
     public static function table(Table $table): Table
