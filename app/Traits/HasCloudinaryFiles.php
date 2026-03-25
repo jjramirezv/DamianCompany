@@ -3,12 +3,12 @@
 namespace App\Traits;
 
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Log;
 
 trait HasCloudinaryFiles
 {
     protected static function bootHasCloudinaryFiles()
     {
-        // 1. ANTES DE ACTUALIZAR
         static::updating(function ($model) {
             foreach ($model->getCloudinaryFields() as $field) {
                 if ($model->isDirty($field) && $model->getOriginal($field)) {
@@ -17,8 +17,6 @@ trait HasCloudinaryFiles
             }
         });
 
-        // 2. EL CAMBIO CLAVE: Usamos 'deleting' en lugar de 'deleted'
-        // Esto evita el error de "Cannot use ::class on null" en Filament
         static::deleting(function ($model) {
             foreach ($model->getCloudinaryFields() as $field) {
                 if ($model->$field) {
@@ -30,26 +28,35 @@ trait HasCloudinaryFiles
 
     protected static function deleteFromCloudinary($url)
     {
+        if (!$url) return;
+
         try {
-            // Extraer el Public ID exacto, incluso si está en carpetas de Cloudinary
+            // 1. Cortamos la URL justo donde dice '/upload/'
             $parts = explode('/upload/', $url);
             
             if (count($parts) > 1) {
-                // Quitamos la versión (ej. v1700000000/) de la URL
-                $pathWithoutVersion = preg_replace('/^v\d+\//', '', $parts[1]);
+                $path = $parts[1]; // Ejemplo: "v1690000000/marcas/logo.png"
                 
-                $dirname = pathinfo($pathWithoutVersion, PATHINFO_DIRNAME);
-                $filename = pathinfo($pathWithoutVersion, PATHINFO_FILENAME);
+                // 2. Separamos por las barras '/'
+                $segments = explode('/', $path);
                 
-                // Construimos el ID final
-                $publicId = ($dirname !== '.') ? $dirname . '/' . $filename : $filename;
+                // 3. Si el primer segmento es la versión (empieza con 'v' y tiene números), lo eliminamos
+                if (preg_match('/^v\d+$/', $segments[0])) {
+                    array_shift($segments);
+                }
                 
-                // Mandamos la orden de destrucción
+                // 4. Volvemos a unir lo que queda (ej. "marcas/logo.png")
+                $publicIdWithExtension = implode('/', $segments);
+                
+                // 5. Le quitamos la extensión (.png, .jpg, .webp) para tener el ID exacto
+                $publicId = preg_replace('/\.[^.]+$/', '', $publicIdWithExtension);
+                
+                // 6. ¡Le damos la orden de destrucción a Cloudinary!
                 Cloudinary::destroy($publicId);
             }
         } catch (\Throwable $e) {
-            // Usamos Throwable para atrapar cualquier falla interna y evitar la pantalla de error 500
-            \Log::warning("No se pudo eliminar la imagen de Cloudinary: " . $e->getMessage());
+            // Si algo falla, ahora lo guardará en los logs para que no sea un error silencioso
+            Log::error("Fallo al borrar en Cloudinary: " . $e->getMessage());
         }
     }
 }
