@@ -39,7 +39,7 @@ class ServicioResource extends Resource
                         Forms\Components\FileUpload::make('imagen')
                             ->image()
                             ->directory('servicios')
-                            ->disk('public'),
+                            ->disk('cloudinary'),
                             
                         Forms\Components\Textarea::make('codigo_embed')
                             ->label('Código de Video (Opcional)')
@@ -52,24 +52,21 @@ class ServicioResource extends Resource
     {
         return $table
             ->columns([
-                // Mostramos la imagen en pequeñito
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
-                    ->square(), // Puedes cambiarlo a ->circular() si prefieres círculos
+                    ->disk(cloudinary)
+                    ->square(), 
                 
-                // Mostramos el título y permitimos buscar por él
                 Tables\Columns\TextColumn::make('titulo')
                     ->label('Título del Servicio')
                     ->searchable()
                     ->sortable(),
                 
-                // Mostramos la descripción cortada para que no deforme la tabla
                 Tables\Columns\TextColumn::make('descripcion')
                     ->label('Descripción')
                     ->limit(50)
                     ->searchable(),
 
-                // Fecha de creación (Opcional, se puede ocultar en el panel)
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado el')
                     ->dateTime('d/m/Y')

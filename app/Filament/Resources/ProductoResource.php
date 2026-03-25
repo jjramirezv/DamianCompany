@@ -69,7 +69,7 @@ class ProductoResource extends Resource
 
                 Forms\Components\FileUpload::make('imagen')
                     ->image()
-                    ->disk('cloaudinary') 
+                    ->disk('cloudinary') 
                     ->directory('productos')
                     ->label('Imagen del Producto') 
                     ->columnSpanFull(),   

@@ -29,7 +29,7 @@ class ClienteResource extends Resource
             Forms\Components\FileUpload::make('logo')
                 ->image()
                 ->directory('clientes')
-                ->disk('public')
+                ->disk('cloudinary')
                 ->required(),
         ]);
 }
@@ -40,7 +40,7 @@ class ClienteResource extends Resource
                 // Mostramos el logo de la institución
                 Tables\Columns\ImageColumn::make('logo')
                     ->label('Logo')
-                    ->disk('public') // Asegura que lea de la carpeta correcta
+                    ->disk('cloudinary') // Asegura que lea de la carpeta correcta
                     ->height(40),
                 
                 // Mostramos el nombre de la institución

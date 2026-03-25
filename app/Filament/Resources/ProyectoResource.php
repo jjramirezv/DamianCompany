@@ -39,7 +39,7 @@ class ProyectoResource extends Resource
                         Forms\Components\FileUpload::make('imagen')
                             ->image()
                             ->directory('proyectos')
-                            ->disk('public'),
+                            ->disk('cloudinary'),
                             
                         Forms\Components\Textarea::make('codigo_embed')
                             ->label('Código de Inserción (Video)')

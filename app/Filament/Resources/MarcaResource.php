@@ -29,6 +29,7 @@ class MarcaResource extends Resource
                 Forms\Components\FileUpload::make('logo')
                     ->image()
                     ->directory('marcas')
+                    ->disk('cloudinary')
                     ->label('Logo de la marca'),
             ]);
     }
@@ -41,6 +42,9 @@ class MarcaResource extends Resource
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('logo')
+                ->label('Logo')
+                ->disk('cloudinary'), 
             ])
             ->filters([
                 //
