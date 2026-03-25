@@ -42,14 +42,14 @@ Route::get('/instalar-bd', function () {
 });
 
 Route::get('/crear-admin', function () {
-    if (User::where('email', 'admin@damiancompany.com')->exists()) {
+    if (\App\Models\User::where('email', 'admin@damiancompany.com')->exists()) {
         return 'El administrador ya existe. Ve a /admin para iniciar sesión.';
     }
 
-    User::create([
+    \App\Models\User::create([
         'name' => 'Jelibeth',
-        'email' => 'damiancompany@damiancompnay.com.pe',
-        'password' => Hash::make('admin12345'), 
+        'email' => 'admin@damiancompany.com',
+        'password' => \Illuminate\Support\Facades\Hash::make('admin12345'),
     ]);
 
     return '¡Usuario Administrador creado con éxito! Ya puedes entrar a tu panel.';
