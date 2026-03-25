@@ -60,3 +60,11 @@ Route::get('/crear-admin', function () {
     ]);
     return '¡Usuario Administrador creado con éxito!';
 });
+
+Route::get('/test-env', function () {
+    return [
+        'CLOUDINARY_URL' => env('CLOUDINARY_URL') ? 'Configurado ✅' : 'VACÍO ❌',
+        'FILESYSTEM_DISK' => config('filesystems.default'),
+        'CLOUD_NAME' => config('cloudinary.cloud_url') ? 'Leído ✅' : 'No leído ❌',
+    ];
+});
