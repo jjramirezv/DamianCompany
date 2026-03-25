@@ -44,8 +44,16 @@ Route::get('/limpiar-todo', function () {
 });
 
 Route::get('/instalar-bd', function () {
-    Artisan::call('migrate', ['--force' => true]);
-    return '¡Tablas creadas con éxito!';
+    // 1. Crea las tablas si no existen (sin borrar los datos que ya hay)
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    
+    // 2. Ejecuta el Seeder para asegurar que el Admin siempre exista
+    \Illuminate\Support\Facades\Artisan::call('db:seed', [
+        '--class' => 'AdminSeeder', 
+        '--force' => true
+    ]);
+
+    return '¡Magia pura! Base de datos actualizada y Admin Jelibeth asegurado.';
 });
 
 Route::get('/crear-admin', function () {
