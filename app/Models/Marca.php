@@ -4,14 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCloudinaryFiles;
 
 class Marca extends Model
 {
-    use HasFactory;
+    use HasFactory, HasCloudinaryFiles;
 
-    protected $fillable=['nombre', 'logo'];
+    protected $fillable = ['nombre', 'logo'];
 
-    //una marca tiene muchos productos
+    public function getCloudinaryFields(): array
+    {
+        return ['logo'];
+    }
+
     public function productos()
     {
         return $this->hasMany(Producto::class);

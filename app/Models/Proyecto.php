@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasCloudinaryFiles;
 
 class Proyecto extends Model
 {
-    protected $fillable = [
-        'titulo',
-        'descripcion',
-        'imagen',
-        'codigo_embed'
-    ];
+    use HasCloudinaryFiles;
+
+    protected $fillable = ['titulo', 'descripcion', 'imagen', 'codigo_embed'];
+
+    public function getCloudinaryFields(): array
+    {
+        return ['imagen'];
+    }
 }
