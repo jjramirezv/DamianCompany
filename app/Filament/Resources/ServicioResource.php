@@ -54,7 +54,7 @@ class ServicioResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
-                    ->disk(cloudinary)
+                    ->disk('cloudinary')
                     ->square(), 
                 
                 Tables\Columns\TextColumn::make('titulo')
