@@ -47,8 +47,8 @@ Route::get('/crear-admin', function () {
     }
 
     \App\Models\User::create([
-        'name' => 'Jelibeth',
-        'email' => 'admin@damiancompany.com',
+        'name' => 'Admin',
+        'email' => 'damiancompany@damiancompany.com.pe',
         'password' => \Illuminate\Support\Facades\Hash::make('admin12345'),
     ]);
 
