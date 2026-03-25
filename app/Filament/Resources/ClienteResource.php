@@ -37,10 +37,9 @@ class ClienteResource extends Resource
     {
         return $table
             ->columns([
-                // Mostramos el logo de la institución
                 Tables\Columns\ImageColumn::make('logo')
                     ->label('Logo')
-                    ->disk('cloudinary') // Asegura que lea de la carpeta correcta
+                    ->disk('cloudinary') 
                     ->height(40),
                 
                 // Mostramos el nombre de la institución

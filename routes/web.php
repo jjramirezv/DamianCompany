@@ -12,6 +12,30 @@ Route::get('/', function () {
 
 Route::get('/tienda', Tienda::class)->name('tienda');
 
+// 1. RUTA PARA LIMPIAR CACHÉ (Vital para que funcione Cloudinary ahora)
+Route::get('/limpiar-todo', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    return '¡Sistema purificado! La caché se ha borrado con éxito.';
+});
+
+Route::get('/crear-admin', function () {
+    $email = 'damiancompany@damiancompany.com.pe'; 
+
+    if (\App\Models\User::where('email', $email)->exists()) {
+        return 'El administrador ya existe. Ve a /admin para iniciar sesión.';
+    }
+
+    \App\Models\User::create([
+        'name' => 'Admin Jelibeth',
+        'email' => $email,
+        'password' => Hash::make('admin12345'),
+    ]);
+
+    return '¡Usuario Administrador creado con éxito! Ya puedes entrar a tu panel.';
+});
+
 Route::get('producto/{id}', function ($id){
     $producto=Producto::with(['categoria', 'marca'])->findOrFail($id);
     return view('producto', compact('producto'));
