@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Tienda;
 use App\Models\Producto; 
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,3 +34,8 @@ Route::get('/proyectos', function () {
 Route::get('/nosotros', function () {
     return view('nosotros');
 })->name('nosotros');
+
+Route::get('/instalar-bd', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return '¡Magia pura! Las tablas de Damian Company se crearon con éxito en la nube.';
+});
