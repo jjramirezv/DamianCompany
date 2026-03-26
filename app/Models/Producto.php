@@ -10,8 +10,11 @@ class Producto extends Model
 {
     use HasFactory, HasCloudinaryFiles;
 
-    protected $fillable = ['nombre', 'codigo', 'descripcion', 'precio', 'stock', 'imagen', 'destacado', 'categoria_id', 'marca_id', 'ficha_tecnica'];
-
+    protected $fillable = [
+        'nombre', 'codigo', 'descripcion', 'precio', 'stock', 'imagen', 
+        'destacado', 'categoria_id', 'marca_id', 'ficha_tecnica',
+        'precio_compra', 'precio_docena', 'stock_min', 'estado', 'especificaciones'
+    ];
     public function getCloudinaryFields(): array
     {
         return ['imagen', 'ficha_tecnica'];
