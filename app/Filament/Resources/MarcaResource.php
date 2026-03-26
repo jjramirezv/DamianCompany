@@ -17,7 +17,10 @@ class MarcaResource extends Resource
 {
     protected static ?string $model = Marca::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-check-badge';
+
+    protected static ?string $navigationGroup = 'Inventario';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

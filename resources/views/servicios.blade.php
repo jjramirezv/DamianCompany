@@ -25,6 +25,7 @@
             </p>
         </div>
     </section>
+    
 
     <section class="py-24 max-w-7xl mx-auto px-6 relative z-10">
         @forelse($serviciosDb as $servicio)
