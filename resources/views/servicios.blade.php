@@ -1,3 +1,10 @@
+@php
+    // Obtenemos los clientes y los servicios para esta vista
+    $clientesDb = \App\Models\Cliente::all();
+    // Asumo que ya mandabas $serviciosDb desde el controlador, o si no, descomenta la siguiente línea:
+    // $serviciosDb = \App\Models\Servicio::all(); 
+@endphp
+
 <x-layouts.app>
     <style>
         .contenedor-video iframe {
@@ -7,6 +14,13 @@
             width: 100% !important;
             height: 100% !important;
         }
+
+        /* Agregamos la animación de scroll aquí por si no está global en el layout */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--track-width, -1000px)); }
+        }
+        .animate-scroll { animation: scroll 30s linear infinite; }
     </style>
 
     <section class="relative pt-32 pb-20 overflow-hidden bg-damian-dark border-b border-white/5">
@@ -26,6 +40,36 @@
         </div>
     </section>
     
+    <section class="py-16 bg-damian-darker relative overflow-hidden border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 mb-10 text-center relative z-10">
+            <span class="font-mono text-sm tracking-widest uppercase text-damian-blue">Nuestra Experiencia</span>
+            <h2 class="text-3xl font-black text-white mt-2">Empresas que confían en nosotros</h2>
+            <div class="h-1 w-16 mt-4 mx-auto rounded-full bg-gradient-to-r from-damian-blue to-damian-green"></div>
+        </div>
+        
+        <div class="relative w-full overflow-hidden flex items-center">
+            <div class="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-damian-darker to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-damian-darker to-transparent z-10 pointer-events-none"></div>
+            
+            <div class="flex animate-scroll gap-12 w-max items-center px-4" style="--track-width: calc(-250px * {{ max($clientesDb->count(), 1) }});">
+                @if($clientesDb->count() > 0)
+                    @for ($i = 0; $i < 8; $i++)
+                        @foreach($clientesDb as $cliente)
+                            <div class="w-[200px] h-[80px] flex items-center justify-center shrink-0 transition-all duration-300 hover:scale-110 opacity-70 hover:opacity-100">
+                                @if($cliente->logo)
+                                    <img src="{{ Storage::url($cliente->logo) }}" alt="{{ $cliente->nombre }}" class="max-h-full max-w-full object-contain">
+                                @else
+                                    <span class="text-xl font-black text-white tracking-widest uppercase text-center">{{ $cliente->nombre }}</span>
+                                @endif
+                            </div>
+                        @endforeach
+                    @endfor
+                @else
+                    <p class="text-damian-gray_mid ml-10">Agrega clientes con sus logos en el panel de administrador para que aparezcan aquí.</p>
+                @endif
+            </div>
+        </div>
+    </section>
 
     <section class="py-24 max-w-7xl mx-auto px-6 relative z-10">
         @forelse($serviciosDb as $servicio)
