@@ -32,7 +32,8 @@ class User extends Authenticatable implements FilamentUser
     }
 
     public function canAccessPanel(Panel $panel): bool
-    {
-        return str_ends_with($this->email, 'damiancompany@damiancompany.com.pe');
-    }
+{
+    // Solo entran Admin y Vendedor
+    return in_array($this->role, ['admin', 'vendedor']);
+}
 }

@@ -9,11 +9,11 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class UltimosProductos extends BaseWidget
 {
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 1;
     
     protected static ?string $heading = 'Últimos Productos Agregados';
     
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 1;
 
     public function table(Table $table): Table
     {

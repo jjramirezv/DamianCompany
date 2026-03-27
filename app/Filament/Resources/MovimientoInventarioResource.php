@@ -53,8 +53,8 @@ class MovimientoInventarioResource extends Resource
                         Forms\Components\Select::make('tipo')
                             ->label('Tipo de Movimiento')
                             ->options([
-                                'ingreso' => 'Suma (+)',
-                                'salida' => 'Resta (-)',
+                                'ingreso' => 'Ingreso',
+                                'salida' => 'Egreso',
                             ])
                             ->required()
                             // Cambia de color según la selección (Verde=Suma, Rojo=Resta)

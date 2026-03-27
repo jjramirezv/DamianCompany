@@ -12,12 +12,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class EstadisticasDashboard extends BaseWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = -2;
 
     protected function getStats(): array
     {
         return [
-            // FILA 1: DINERO Y ALERTAS (OPERATIVO)
             Stat::make('Ventas del Mes', 'S/ ' . number_format(Venta::whereMonth('created_at', now()->month)->sum('total'), 2))
                 ->description('Ingresos acumulados')
                 ->descriptionIcon('heroicon-m-presentation-chart-line')

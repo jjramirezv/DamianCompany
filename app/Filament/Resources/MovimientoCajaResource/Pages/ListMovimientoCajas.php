@@ -16,4 +16,8 @@ class ListMovimientoCajas extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+    public function getSubheading(): ?string
+{
+    return 'Aquí se controla el dinero real de la empresa. "Ingreso" es dinero que entra (usualmente por ventas) y "Egreso" es dinero que sale (pagos, gastos, sueldos). El saldo final debe coincidir con tu caja física.';
+}
 }

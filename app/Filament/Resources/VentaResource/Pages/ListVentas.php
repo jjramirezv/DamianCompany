@@ -24,4 +24,8 @@ class ListVentas extends ListRecords
                 ->action(fn () => Excel::download(new ReporteDiarioExport, 'Cierre_Damian_Company_' . now()->format('d_m_Y') . '.xlsx')),
         ];
     }
+    public function getSubheading(): ?string
+{
+    return 'Módulo principal de ingresos. Al registrar una venta, el sistema hace tres cosas: genera el comprobante, descuenta el stock del Kardex y suma el dinero al Flujo de Caja automáticamente.';
+}
 }
