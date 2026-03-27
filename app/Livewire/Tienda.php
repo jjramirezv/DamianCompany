@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Illuminate\Support\Str;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\Marca;
@@ -17,25 +18,44 @@ class Tienda extends Component
     public $search = '';
 
     #[Url(as: 'cat')]
-    public $categoria = '';
+    public $categoria_id = '';
 
     #[Url(as: 'marca')]
-    public $marca = '';
+    public $marca_id = '';
+
+    // Nueva variable de Livewire para el menú de celular (Sin Alpine)
+    public $mostrarFiltrosMobile = false;
 
     public function updatingSearch() { $this->resetPage(); }
-    public function updatingCategoria() { $this->resetPage(); }
-    public function updatingMarca() { $this->resetPage(); }
 
-    public function limpiarFiltros()
+    public function seleccionarCategoria($id) 
     {
-        $this->reset(['search', 'categoria', 'marca']);
+        $this->categoria_id = $id;
         $this->resetPage();
+    }
+
+    public function seleccionarMarca($id) 
+    {
+        $this->marca_id = $id;
+        $this->resetPage();
+    }
+
+    public function limpiarFiltros() 
+    {
+        $this->reset(['search', 'categoria_id', 'marca_id']);
+        $this->resetPage();
+    }
+
+    public function toggleFiltros()
+    {
+        $this->mostrarFiltrosMobile = !$this->mostrarFiltrosMobile;
     }
 
     public function render()
     {
         $query = Producto::with(['categoria', 'marca']);
 
+        // 1. Buscador
         if (!empty($this->search)) {
             $query->where(function($q) {
                 $q->where('nombre', 'like', '%' . $this->search . '%')
@@ -43,45 +63,57 @@ class Tienda extends Component
             });
         }
 
-        $activeParentId = null;
+        $idReal = null;
+        $padreActivo = null;
+        $hijosActivos = collect();
 
-        if (!empty($this->categoria)) {
-            if (is_numeric($this->categoria)) {
-                $catSeleccionada = Categoria::find($this->categoria);
+        // 2. Filtro de Categoría Aisaldo
+        if (!empty($this->categoria_id)) {
+            
+            // Traductor para cuando entras desde el Navbar superior
+            if (!is_numeric($this->categoria_id)) {
+                $slugBuscado = Str::slug($this->categoria_id);
+                $catEncontrada = Categoria::all()->first(fn($c) => Str::slug($c->nombre) === $slugBuscado);
+                $idReal = $catEncontrada ? $catEncontrada->id : null;
             } else {
-                $nombreLimpio = str_replace('-', ' ', $this->categoria);
-                
-                // CORRECCIÓN AQUÍ: Busca con el guion original O con el espacio
-                $catSeleccionada = Categoria::where('nombre', 'like', '%' . $this->categoria . '%')
-                                            ->orWhere('nombre', 'like', '%' . $nombreLimpio . '%')
-                                            ->first();
+                $idReal = $this->categoria_id;
             }
 
-            if ($catSeleccionada) {
-                $activeParentId = $catSeleccionada->parent_id ?? $catSeleccionada->id;
+            if ($idReal) {
+                $categoriaActual = Categoria::find($idReal);
 
-                if (is_null($catSeleccionada->parent_id)) {
-                    $ids = Categoria::where('parent_id', $catSeleccionada->id)->pluck('id')->push($catSeleccionada->id);
-                    $query->whereIn('categoria_id', $ids);
-                } else {
-                    $query->where('categoria_id', $catSeleccionada->id);
+                if ($categoriaActual) {
+                    if (is_null($categoriaActual->parent_id)) {
+                        // Es un PADRE (Ej: Agro-forestal)
+                        $padreActivo = $categoriaActual;
+                        $hijosActivos = Categoria::where('parent_id', $padreActivo->id)->get();
+                        
+                        $hijosIds = $hijosActivos->pluck('id')->toArray();
+                        $hijosIds[] = $idReal; 
+                        $query->whereIn('categoria_id', $hijosIds);
+                    } else {
+                        // Es un HIJO (Ej: Agricultura)
+                        $padreActivo = Categoria::find($categoriaActual->parent_id);
+                        $hijosActivos = Categoria::where('parent_id', $padreActivo->id)->get();
+                        
+                        $query->where('categoria_id', $idReal);
+                    }
                 }
             }
         }
 
-        if (!empty($this->marca)) {
-            $query->where('marca_id', $this->marca);
+        // 3. Filtro de Marca
+        if (!empty($this->marca_id)) {
+            $query->where('marca_id', $this->marca_id);
         }
 
-        $productos = $query->latest()->paginate(12);
-        $categoriasDb = Categoria::all();
-        $marcasDb = Marca::all();
-
         return view('livewire.tienda', [
-            'productos' => $productos,
-            'categoriasDb' => $categoriasDb,
-            'marcasDb' => $marcasDb,
-            'activeParentId' => $activeParentId
+            'productos' => $query->latest()->paginate(12),
+            'categoriasPadre' => Categoria::whereNull('parent_id')->get(),
+            'marcasDb' => Marca::all(),
+            'padreActivo' => $padreActivo,
+            'hijosActivos' => $hijosActivos,
+            'idReal' => $idReal
         ]);
     }
 }

@@ -5,14 +5,14 @@
         <div class="h-1 w-16 md:w-20 mt-3 md:mt-4 rounded-full bg-gradient-to-r from-damian-blue to-damian-green mx-auto md:mx-0"></div>
     </div>
 
-    <div x-data="{ openFilters: false }" class="flex flex-col lg:flex-row gap-6 md:gap-10">
+    <div class="flex flex-col lg:flex-row gap-6 md:gap-10">
         
-        <button @click="openFilters = !openFilters" class="lg:hidden w-full bg-damian-card border border-white/10 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg mb-2">
+        <button wire:click="toggleFiltros" class="lg:hidden w-full bg-damian-card border border-white/10 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg mb-2">
             <svg class="w-5 h-5 text-damian-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            <span x-text="openFilters ? 'Ocultar Filtros' : 'Mostrar Filtros y Buscar'"></span>
+            <span>{{ $mostrarFiltrosMobile ? 'Ocultar Filtros' : 'Mostrar Filtros y Buscar' }}</span>
         </button>
 
-        <div x-show="openFilters" x-collapse class="lg:!block w-full lg:w-1/4 mb-6 lg:mb-0">
+        <div class="w-full lg:w-1/4 mb-6 lg:mb-0 transition-all {{ $mostrarFiltrosMobile ? 'block' : 'hidden lg:block' }}">
             <div class="bg-damian-card border border-white/5 rounded-2xl p-5 md:p-6 lg:sticky lg:top-28 shadow-lg">
                 
                 <div class="mb-6 md:mb-8">
@@ -25,43 +25,38 @@
 
                 <div class="mb-6 md:mb-8">
                     <h3 class="text-white font-bold mb-3 md:mb-4 uppercase tracking-wider text-xs">Categorías</h3>
+                    
                     <div class="flex flex-col space-y-2">
-                        @if($activeParentId)
-                            @php
-                                $padre = $categoriasDb->where('id', $activeParentId)->first();
-                                $hijos = $categoriasDb->where('parent_id', $activeParentId);
-                            @endphp
-                            
-                            <button wire:click="$set('categoria', '')" class="w-full flex items-center justify-start gap-2 px-3 py-2 rounded-lg text-xs font-bold text-damian-gray_mid hover:text-white hover:bg-white/5 transition-all text-left mb-2">
+                        @if($padreActivo)
+                            <button wire:click="seleccionarCategoria('')" class="w-full flex items-center justify-start gap-2 px-3 py-2 rounded-lg text-xs font-bold text-damian-gray_mid hover:text-white hover:bg-white/5 transition-all text-left mb-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                 Volver a todas
                             </button>
 
-                            <button wire:click="$set('categoria', '{{ $padre->id }}')" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs md:text-sm font-black tracking-wide uppercase transition-all text-left shadow-md {{ $categoria == $padre->id ? 'bg-damian-green text-white shadow-damian-green/20' : 'bg-white/5 text-white hover:bg-white/10 border border-white/5' }}">
-                                <span>{{ $padre->nombre }}</span>
-                                @if($categoria == $padre->id)
+                            <button wire:click="seleccionarCategoria({{ $padreActivo->id }})" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs md:text-sm font-black tracking-wide uppercase transition-all text-left shadow-md {{ $idReal == $padreActivo->id ? 'bg-damian-green text-white shadow-damian-green/20' : 'bg-white/5 text-white hover:bg-white/10 border border-white/5' }}">
+                                <span>{{ $padreActivo->nombre }}</span>
+                                @if($idReal == $padreActivo->id)
                                     <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 @endif
                             </button>
 
-                            @if($hijos->count() > 0)
+                            @if($hijosActivos->count() > 0)
                                 <div class="mt-2 flex flex-col space-y-1 relative">
                                     <div class="absolute left-6 top-0 bottom-4 w-px bg-white/10"></div>
-                                    @foreach($hijos as $hijo)
-                                        <button wire:click="$set('categoria', '{{ $hijo->id }}')" class="relative w-full flex items-center pl-12 pr-4 py-3 rounded-lg text-xs md:text-sm font-medium transition-all text-left group {{ $categoria == $hijo->id ? 'text-damian-blue bg-damian-blue/10' : 'text-damian-gray_light hover:text-white hover:bg-white/5' }}">
-                                            <div class="absolute left-6 top-1/2 w-4 h-px transition-colors {{ $categoria == $hijo->id ? 'bg-damian-blue' : 'bg-white/10 group-hover:bg-white/30' }}"></div>
+                                    @foreach($hijosActivos as $hijo)
+                                        <button wire:key="hijo-{{ $hijo->id }}" wire:click="seleccionarCategoria({{ $hijo->id }})" class="relative w-full flex items-center pl-12 pr-4 py-3 rounded-lg text-xs md:text-sm font-medium transition-all text-left group {{ $idReal == $hijo->id ? 'text-damian-blue bg-damian-blue/10' : 'text-damian-gray_light hover:text-white hover:bg-white/5' }}">
+                                            <div class="absolute left-6 top-1/2 w-4 h-px transition-colors {{ $idReal == $hijo->id ? 'bg-damian-blue' : 'bg-white/10 group-hover:bg-white/30' }}"></div>
                                             {{ $hijo->nombre }}
                                         </button>
                                     @endforeach
                                 </div>
                             @endif
-
                         @else
-                            <button wire:click="$set('categoria', '')" class="w-full flex items-center justify-start px-4 py-3 rounded-xl text-xs md:text-sm font-bold bg-white/5 text-white transition-all text-left mb-2 shadow-sm">
+                            <button wire:click="seleccionarCategoria('')" class="w-full flex items-center justify-start px-4 py-3 rounded-xl text-xs md:text-sm font-bold bg-white/5 text-white transition-all text-left mb-2 shadow-sm">
                                 Todas las Categorías
                             </button>
-                            @foreach($categoriasDb->whereNull('parent_id') as $cat)
-                                <button wire:click="$set('categoria', '{{ $cat->id }}')" class="group w-full flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 rounded-lg text-xs md:text-sm font-medium text-damian-gray_light hover:text-white hover:bg-white/5 transition-all text-left">
+                            @foreach($categoriasPadre as $cat)
+                                <button wire:key="padre-{{ $cat->id }}" wire:click="seleccionarCategoria({{ $cat->id }})" class="group w-full flex items-center justify-between px-3 md:px-4 py-2.5 md:py-3 rounded-lg text-xs md:text-sm font-medium text-damian-gray_light hover:text-white hover:bg-white/5 transition-all text-left">
                                     <span>{{ $cat->nombre }}</span>
                                     <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-damian-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </button>
@@ -73,11 +68,11 @@
                 <div class="mb-6 md:mb-8">
                     <h3 class="text-white font-bold mb-3 md:mb-4 uppercase tracking-wider text-xs">Marcas</h3>
                     <div class="flex flex-col space-y-1">
-                        <button wire:click="$set('marca', '')" class="w-full flex items-center justify-start px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm transition-all text-left {{ empty($marca) ? 'bg-damian-blue/10 text-damian-blue font-bold border border-damian-blue/20' : 'text-damian-gray_light hover:bg-white/5 hover:text-white border border-transparent' }}">
+                        <button wire:click="seleccionarMarca('')" class="w-full flex items-center justify-start px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm transition-all text-left {{ empty($marca_id) ? 'bg-damian-blue/10 text-damian-blue font-bold border border-damian-blue/20' : 'text-damian-gray_light hover:bg-white/5 hover:text-white border border-transparent' }}">
                             Todas las Marcas
                         </button>
                         @foreach($marcasDb as $m)
-                            <button wire:click="$set('marca', '{{ $m->id }}')" class="w-full flex items-center justify-start px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm transition-all text-left {{ $marca == $m->id ? 'bg-damian-blue/10 text-damian-blue font-bold border border-damian-blue/20' : 'text-damian-gray_light hover:bg-white/5 hover:text-white border border-transparent' }}">
+                            <button wire:key="marca-{{ $m->id }}" wire:click="seleccionarMarca({{ $m->id }})" class="w-full flex items-center justify-start px-3 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-sm transition-all text-left {{ $marca_id == $m->id ? 'bg-damian-blue/10 text-damian-blue font-bold border border-damian-blue/20' : 'text-damian-gray_light hover:bg-white/5 hover:text-white border border-transparent' }}">
                                 {{ $m->nombre }}
                             </button>
                         @endforeach
@@ -93,6 +88,9 @@
         <div class="w-full lg:w-3/4">
             <div class="flex justify-between items-center mb-6 text-xs md:text-sm text-damian-gray_mid pb-4 border-b border-white/5">
                 <p>Mostrando <span class="text-white font-bold">{{ $productos->total() }}</span> resultados</p>
+                <div wire:loading class="text-damian-green animate-pulse font-bold text-xs bg-damian-green/10 px-3 py-1 rounded">
+                    Filtrando...
+                </div>
             </div>
 
             @if($productos->isEmpty())
@@ -103,9 +101,9 @@
                     <button wire:click="limpiarFiltros" class="bg-damian-green text-white px-5 md:px-6 py-2 md:py-3 rounded-xl font-bold hover:bg-damian-green_light transition-colors shadow-lg text-sm">Quitar filtros</button>
                 </div>
             @else
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 items-stretch">
+                <div wire:loading.class="opacity-50 pointer-events-none" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 items-stretch transition-opacity duration-200">
                     @foreach($productos as $producto)
-                        <div class="group bg-damian-card rounded-2xl overflow-hidden border border-white/5 hover:border-damian-green/50 transition-all duration-300 shadow-lg flex flex-col">
+                        <div wire:key="prod-{{ $producto->id }}" class="group bg-damian-card rounded-2xl overflow-hidden border border-white/5 hover:border-damian-green/50 transition-all duration-300 shadow-lg flex flex-col">
                             
                             <a href="{{ route('producto.show', $producto->id) }}" class="relative h-48 md:h-56 bg-white flex items-center justify-center p-4 overflow-hidden block">
                                 @if($producto->imagen)
@@ -113,19 +111,13 @@
                                 @endif
                                 
                                 <div class="absolute top-3 left-3 bg-damian-darker/90 backdrop-blur-sm text-white text-[9px] md:text-[10px] font-bold px-2 md:px-3 py-1 rounded-full border border-white/10 uppercase tracking-wider z-10">
-                                    {{ $producto->categoria ? $producto->categoria->nombre : 'General' }}
+                                    {{ $producto->categoria?->nombre ?? 'General' }}
                                 </div>
-
-                                @if($producto->stock <= $producto->stock_min && $producto->stock > 0)
-                                    <div class="absolute top-3 right-3 bg-amber-500 text-white text-[8px] md:text-[9px] font-black px-2 py-1 rounded shadow-lg animate-pulse z-10">
-                                        ÚLTIMAS
-                                    </div>
-                                @endif
                             </a>
 
                             <div class="p-4 md:p-5 flex flex-col flex-grow">
                                 <span class="text-[9px] md:text-[10px] font-bold text-damian-blue uppercase tracking-wider mb-1">
-                                    {{ $producto->marca ? $producto->marca->nombre : 'Sin Marca' }}
+                                    {{ $producto->marca?->nombre ?? 'Sin Marca' }}
                                 </span>
                                 
                                 <a href="{{ route('producto.show', $producto->id) }}" class="text-sm md:text-base font-bold text-white mb-2 leading-tight flex-grow hover:text-damian-green transition-colors block">
