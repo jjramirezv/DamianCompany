@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MovimientoInventario extends Model
 {
-    protected $table = 'movimientos_inventario'; // Forzamos el nombre exacto de la tabla
+    protected $table = 'movimientos_inventario';
     protected $fillable = [
         'producto_id', 'tipo', 'cantidad', 'motivo', 'user_id', 
         'stock_antes', 'stock_despues'

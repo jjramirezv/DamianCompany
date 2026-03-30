@@ -11,7 +11,6 @@ trait HasCloudinaryFiles
     {
         static::updating(function ($model) {
             foreach ($model->getCloudinaryFields() as $field) {
-                // Si el campo cambió, borramos el archivo viejo
                 if ($model->isDirty($field) && $model->getOriginal($field)) {
                     static::deleteFromCloudinary($model->getOriginal($field));
                 }
@@ -20,7 +19,6 @@ trait HasCloudinaryFiles
 
         static::deleting(function ($model) {
             foreach ($model->getCloudinaryFields() as $field) {
-                // Al borrar el registro, borramos el archivo
                 if ($model->$field) {
                     static::deleteFromCloudinary($model->$field);
                 }
@@ -33,8 +31,6 @@ trait HasCloudinaryFiles
         if (!$path) return;
 
         try {
-            // Le decimos al disco de Cloudinary que busque el archivo y lo elimine.
-            // Laravel y el paquete se encargan de encontrar el ID correcto automáticamente.
             Storage::disk('cloudinary')->delete($path);
             
         } catch (\Throwable $e) {

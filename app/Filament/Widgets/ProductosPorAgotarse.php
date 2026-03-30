@@ -34,9 +34,7 @@ class ProductosPorAgotarse extends BaseWidget
                     ->badge()
                     ->color('danger'),
             ])
-            // Usamos la forma nativa y segura de Filament para que no explote
             ->paginated(false)
-            // Agregamos un límite a la consulta por si tienes 100 productos agotados no te rompa la pantalla
             ->defaultPaginationPageOption(5); 
     }
 }

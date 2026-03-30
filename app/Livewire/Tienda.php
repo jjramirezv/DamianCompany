@@ -23,7 +23,6 @@ class Tienda extends Component
     #[Url(as: 'marca')]
     public $marca_id = '';
 
-    // Nueva variable de Livewire para el menú de celular (Sin Alpine)
     public $mostrarFiltrosMobile = false;
 
     public function updatingSearch() { $this->resetPage(); }
@@ -55,7 +54,6 @@ class Tienda extends Component
     {
         $query = Producto::with(['categoria', 'marca']);
 
-        // 1. Buscador
         if (!empty($this->search)) {
             $query->where(function($q) {
                 $q->where('nombre', 'like', '%' . $this->search . '%')
@@ -67,10 +65,8 @@ class Tienda extends Component
         $padreActivo = null;
         $hijosActivos = collect();
 
-        // 2. Filtro de Categoría Aisaldo
         if (!empty($this->categoria_id)) {
             
-            // Traductor para cuando entras desde el Navbar superior
             if (!is_numeric($this->categoria_id)) {
                 $slugBuscado = Str::slug($this->categoria_id);
                 $catEncontrada = Categoria::all()->first(fn($c) => Str::slug($c->nombre) === $slugBuscado);
@@ -102,7 +98,6 @@ class Tienda extends Component
             }
         }
 
-        // 3. Filtro de Marca
         if (!empty($this->marca_id)) {
             $query->where('marca_id', $this->marca_id);
         }

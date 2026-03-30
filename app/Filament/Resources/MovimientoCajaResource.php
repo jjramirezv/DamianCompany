@@ -17,7 +17,7 @@ class MovimientoCajaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Flujo de Caja';
     protected static ?string $navigationGroup = 'Gestión de Ventas';
-    protected static ?int $navigationSort = 2; // Para que aparezca justo debajo de "Punto de Venta"
+    protected static ?int $navigationSort = 2; 
 
     public static function form(Form $form): Form
     {
@@ -80,7 +80,6 @@ class MovimientoCajaResource extends Resource
                 Tables\Columns\TextColumn::make('monto')
                     ->money('PEN')
                     ->weight('bold')
-                    // Pintamos el número de verde si es ingreso y rojo si es egreso
                     ->color(fn ($record) => $record->tipo === 'ingreso' ? 'success' : 'danger')
                     ->sortable(),
 
@@ -102,7 +101,6 @@ class MovimientoCajaResource extends Resource
                     ]),
             ])
             ->actions([
-                // Permitimos editar por si se equivocaron al tipear el monto de un gasto
                 Tables\Actions\EditAction::make(),
             ]);
     }

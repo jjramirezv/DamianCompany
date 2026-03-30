@@ -45,13 +45,11 @@ class ClienteResource extends Resource
                     ->disk('cloudinary') 
                     ->height(40),
                 
-                // Mostramos el nombre de la institución
                 Tables\Columns\TextColumn::make('nombre')
                     ->label('Institución / Empresa')
                     ->searchable()
                     ->sortable(),
 
-                // Fecha de registro
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Registrado el')
                     ->dateTime('d/m/Y')

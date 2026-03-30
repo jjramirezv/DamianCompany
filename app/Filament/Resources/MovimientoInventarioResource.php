@@ -16,13 +16,10 @@ class MovimientoInventarioResource extends Resource
 {
     protected static ?string $model = MovimientoInventario::class;
 
-    // Cambiamos el nombre que se muestra en el menú
     protected static ?string $navigationLabel = 'Kardex (Historial)';
-    // Icono de flechas de intercambio
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left'; 
 
     protected static ?string $navigationGroup = 'Inventario';
-    // Lo ponemos al final del grupo
     protected static ?int $navigationSort = 4; 
 
     public static function form(Form $form): Form
@@ -38,9 +35,7 @@ class MovimientoInventarioResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            // Activamos el modo live para poder reaccionar a cambios
                             ->live() 
-                            // Pequeño truco para mostrar el stock actual debajo del selector
                             ->helperText(function (Forms\Get $get) {
                                 $productoId = $get('producto_id');
                                 if ($productoId) {
@@ -57,7 +52,6 @@ class MovimientoInventarioResource extends Resource
                                 'salida' => 'Egreso',
                             ])
                             ->required()
-                            // Cambia de color según la selección (Verde=Suma, Rojo=Resta)
                             ->native(false)
                             ->selectablePlaceholder(false),
 
@@ -65,7 +59,7 @@ class MovimientoInventarioResource extends Resource
                             ->label('Cantidad Exacta')
                             ->numeric()
                             ->required()
-                            ->minValue(1) // No permitimos mover 0 o números negativos
+                            ->minValue(1)
                             ->default(1),
 
                         Forms\Components\TextInput::make('motivo')
@@ -75,7 +69,6 @@ class MovimientoInventarioResource extends Resource
                             ->maxLength(255)
                             ->columnSpanFull(),
 
-                        // Ocultamos el campo user_id y le ponemos el ID del admin logueado por defecto
                         Forms\Components\Hidden::make('user_id')
                             ->default(auth()->id()),
                     ])->columns(3),
@@ -86,7 +79,6 @@ class MovimientoInventarioResource extends Resource
     {
         return $table
             ->columns([
-                // Fecha formateada (día/mes/año hora:minuto)
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha y Hora')
                     ->dateTime('d/m/Y H:i')
@@ -98,7 +90,6 @@ class MovimientoInventarioResource extends Resource
                     ->sortable()
                     ->weight('bold'),
                 
-                // SKU del producto (pequeño y en gris)
                 Tables\Columns\TextColumn::make('producto.codigo')
                     ->label('SKU')
                     ->size('xs')
@@ -106,7 +97,6 @@ class MovimientoInventarioResource extends Resource
 
                 Tables\Columns\TextColumn::make('tipo')
                     ->label('Tipo')
-                    // Lo convertimos en una etiqueta (badge) con colores
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'ingreso' => 'success', // Verde
@@ -125,17 +115,15 @@ class MovimientoInventarioResource extends Resource
                 Tables\Columns\TextColumn::make('motivo')
                     ->label('Motivo / Referencia')
                     ->searchable()
-                    ->limit(40), // Limitamos el texto para que no rompa la tabla
-
-                // Mostramos qué admin hizo el registro
+                    ->limit(40), 
+                
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Registrado por')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            // Ordenamos por defecto del más nuevo al más viejo
+           
             ->defaultSort('created_at', 'desc') 
             ->filters([
-                // Filtro rápido por tipo de movimiento
                 Tables\Filters\SelectFilter::make('tipo')
                     ->options([
                         'ingreso' => 'Entradas',
@@ -143,12 +131,10 @@ class MovimientoInventarioResource extends Resource
                     ]),
             ])
             ->actions([
-                // En un Kardex histórico, NO se deben permitir editar ni borrar registros
-                // ya que rompería la trazabilidad. Solo permitimos ver detalles.
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                // No permitimos acciones masivas tampoco por seguridad del historial
+                // 
             ]);
     }
 
@@ -162,7 +148,6 @@ class MovimientoInventarioResource extends Resource
     public static function getPages(): array
     {
         return [
-            // Solo creamos las páginas de listar y crear. Quitamos la de editar.
             'index' => Pages\ListMovimientoInventarios::route('/'),
             'create' => Pages\CreateMovimientoInventario::route('/create'),
         ];

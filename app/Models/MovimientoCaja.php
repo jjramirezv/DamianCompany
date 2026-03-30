@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MovimientoCaja extends Model
 {
-    protected $table = 'movimientos_caja'; // Forzamos el nombre exacto de la tabla
+    protected $table = 'movimientos_caja'; 
     protected $fillable = ['tipo', 'monto', 'concepto', 'comprobante', 'user_id'];
 
     public function user()

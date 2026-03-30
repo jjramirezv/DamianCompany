@@ -20,7 +20,6 @@ class InventarioSheet implements FromCollection, WithHeadings, WithMapping, Shou
 
     public function collection()
     {
-        // Traemos todos los movimientos de HOY, incluyendo ventas, compras a proveedores, mermas, etc.
         return MovimientoInventario::with('producto')
             ->whereDate('created_at', now())
             ->get();
@@ -42,9 +41,9 @@ class InventarioSheet implements FromCollection, WithHeadings, WithMapping, Shou
             $movimiento->created_at->format('H:i:s'),
             $movimiento->producto->codigo ?? '-',
             $movimiento->producto->nombre,
-            strtoupper($movimiento->tipo), // INGRESO o SALIDA
+            strtoupper($movimiento->tipo), 
             ($movimiento->tipo === 'ingreso' ? '+' : '-') . $movimiento->cantidad,
-            $movimiento->stock_despues ?? $movimiento->producto->stock, // Muestra cómo quedó el stock en ese momento
+            $movimiento->stock_despues ?? $movimiento->producto->stock, 
             $movimiento->motivo
         ];
     }

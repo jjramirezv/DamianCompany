@@ -26,7 +26,6 @@ class ProductoResource extends Resource
     {
         return $form
             ->schema([
-                // BLOQUE 1: DATOS PRINCIPALES
                 Forms\Components\Section::make('Información Principal')
                     ->description('Datos básicos y clasificación del producto.')
                     ->icon('heroicon-o-information-circle')
@@ -61,7 +60,6 @@ class ProductoResource extends Resource
                             ->helperText('Se genera solo, pero puedes editarlo.'),
                     ])->columns(3),
 
-                // BLOQUE 2: PRECIOS (El área de dinero)
                 Forms\Components\Section::make('Costos y Precios')
                     ->description('Define cuánto te costó y a cuánto lo vendes.')
                     ->icon('heroicon-o-currency-dollar')

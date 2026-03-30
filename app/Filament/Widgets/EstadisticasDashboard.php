@@ -34,7 +34,6 @@ class EstadisticasDashboard extends BaseWidget
                 ->descriptionIcon('heroicon-m-exclamation-triangle')
                 ->color('danger'),
 
-            // FILA 2: VOLUMEN DE CATÁLOGO (ESTADÍSTICO)
             Stat::make('Total Productos', Producto::count())
                 ->description('Equipos en sistema')
                 ->descriptionIcon('heroicon-m-cube')
