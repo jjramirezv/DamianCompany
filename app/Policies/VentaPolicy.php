@@ -12,17 +12,16 @@ class VentaPolicy
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
-{
-    // Permitimos que ambos vean el módulo de Ventas
-    return in_array($user->role, ['admin', 'vendedor']);
-}
+    {
+        return in_array($user->role, ['admin', 'vendedor']);
+    }
 
     /**
      * Determine whether the user can view the model.
      */
     public function view(User $user, Venta $venta): bool
     {
-        return false;
+        return in_array($user->role, ['admin', 'vendedor']);
     }
 
     /**
@@ -30,7 +29,7 @@ class VentaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return in_array($user->role, ['admin', 'vendedor']);
     }
 
     /**
@@ -38,7 +37,7 @@ class VentaPolicy
      */
     public function update(User $user, Venta $venta): bool
     {
-        return false;
+        return in_array($user->role, ['admin', 'vendedor']);
     }
 
     /**
@@ -46,7 +45,7 @@ class VentaPolicy
      */
     public function delete(User $user, Venta $venta): bool
     {
-        return false;
+        return in_array($user->role, ['admin', 'vendedor']);
     }
 
     /**
@@ -54,7 +53,7 @@ class VentaPolicy
      */
     public function restore(User $user, Venta $venta): bool
     {
-        return false;
+        return in_array($user->role, ['admin', 'vendedor']);
     }
 
     /**
@@ -62,6 +61,6 @@ class VentaPolicy
      */
     public function forceDelete(User $user, Venta $venta): bool
     {
-        return false;
+        return in_array($user->role, ['admin', 'vendedor']);
     }
 }

@@ -12,17 +12,17 @@ class ServicioPolicy
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
-{
-    // Solo tú (admin) podrás ver estos módulos
-    return $user->role === 'admin';
-}
+    {
+        // Solo tú (admin) podrás ver estos módulos
+        return $user->role === 'admin';
+    }
 
     /**
      * Determine whether the user can view the model.
      */
     public function view(User $user, Servicio $servicio): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -30,7 +30,7 @@ class ServicioPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -38,7 +38,7 @@ class ServicioPolicy
      */
     public function update(User $user, Servicio $servicio): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -46,7 +46,7 @@ class ServicioPolicy
      */
     public function delete(User $user, Servicio $servicio): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -54,7 +54,7 @@ class ServicioPolicy
      */
     public function restore(User $user, Servicio $servicio): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -62,6 +62,6 @@ class ServicioPolicy
      */
     public function forceDelete(User $user, Servicio $servicio): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 }

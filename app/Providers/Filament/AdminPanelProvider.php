@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Damian Company')
             ->colors([
                 'primary' => \Filament\Support\Colors\Color::hex('#22a15e'), // verde
                 'gray'    => \Filament\Support\Colors\Color::hex('#182b49'), // azul oscuro

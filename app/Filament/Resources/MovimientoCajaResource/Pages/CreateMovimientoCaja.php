@@ -9,4 +9,11 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateMovimientoCaja extends CreateRecord
 {
     protected static string $resource = MovimientoCajaResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
+
+

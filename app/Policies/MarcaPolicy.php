@@ -22,7 +22,7 @@ class MarcaPolicy
      */
     public function view(User $user, Marca $marca): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -30,7 +30,7 @@ class MarcaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -38,7 +38,7 @@ class MarcaPolicy
      */
     public function update(User $user, Marca $marca): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -46,7 +46,7 @@ class MarcaPolicy
      */
     public function delete(User $user, Marca $marca): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -54,7 +54,7 @@ class MarcaPolicy
      */
     public function restore(User $user, Marca $marca): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -62,6 +62,6 @@ class MarcaPolicy
      */
     public function forceDelete(User $user, Marca $marca): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 }

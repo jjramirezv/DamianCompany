@@ -22,7 +22,7 @@ class ClientePolicy
      */
     public function view(User $user, Cliente $cliente): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -30,7 +30,7 @@ class ClientePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -38,7 +38,7 @@ class ClientePolicy
      */
     public function update(User $user, Cliente $cliente): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -46,7 +46,7 @@ class ClientePolicy
      */
     public function delete(User $user, Cliente $cliente): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -54,7 +54,7 @@ class ClientePolicy
      */
     public function restore(User $user, Cliente $cliente): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -62,6 +62,6 @@ class ClientePolicy
      */
     public function forceDelete(User $user, Cliente $cliente): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 }

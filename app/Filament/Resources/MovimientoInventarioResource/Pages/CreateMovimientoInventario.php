@@ -11,7 +11,6 @@ class CreateMovimientoInventario extends CreateRecord
 {
     protected static string $resource = MovimientoInventarioResource::class;
 
-    // Esta función de Filament nos permite interceptar los datos JUSTO ANTES de guardarlos
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $productoId = $data['producto_id'];
@@ -21,7 +20,7 @@ class CreateMovimientoInventario extends CreateRecord
         // Buscamos el producto en la base de datos
         $producto = Producto::findOrFail($productoId);
 
-        // --- LÓGICA DE ACTUALIZACIÓN DEL STOCK ---
+        // LÓGICA DE ACTUALIZACIÓN DEL STOCK 
 
         if ($tipoMovimiento === 'ingreso') {
             // Si es ingreso, SUMAMOS al stock actual

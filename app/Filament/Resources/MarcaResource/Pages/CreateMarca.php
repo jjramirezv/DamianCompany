@@ -9,4 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateMarca extends CreateRecord
 {
     protected static string $resource = MarcaResource::class;
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

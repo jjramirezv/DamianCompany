@@ -13,7 +13,7 @@ class MovimientoInventarioPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -21,7 +21,7 @@ class MovimientoInventarioPolicy
      */
     public function view(User $user, MovimientoInventario $movimientoInventario): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -29,7 +29,7 @@ class MovimientoInventarioPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class MovimientoInventarioPolicy
      */
     public function update(User $user, MovimientoInventario $movimientoInventario): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class MovimientoInventarioPolicy
      */
     public function delete(User $user, MovimientoInventario $movimientoInventario): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -53,7 +53,7 @@ class MovimientoInventarioPolicy
      */
     public function restore(User $user, MovimientoInventario $movimientoInventario): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -61,6 +61,6 @@ class MovimientoInventarioPolicy
      */
     public function forceDelete(User $user, MovimientoInventario $movimientoInventario): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 }

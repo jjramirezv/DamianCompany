@@ -13,7 +13,6 @@ class ProductoPolicy
      */
     public function viewAny(User $user): bool
     {
-        // Solo el admin puede ver el Kardex
         return $user->role === 'admin';
     }
 
@@ -22,7 +21,7 @@ class ProductoPolicy
      */
     public function view(User $user, Producto $producto): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -30,7 +29,7 @@ class ProductoPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -38,7 +37,7 @@ class ProductoPolicy
      */
     public function update(User $user, Producto $producto): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -46,7 +45,7 @@ class ProductoPolicy
      */
     public function delete(User $user, Producto $producto): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -54,7 +53,7 @@ class ProductoPolicy
      */
     public function restore(User $user, Producto $producto): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -62,6 +61,6 @@ class ProductoPolicy
      */
     public function forceDelete(User $user, Producto $producto): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 }
