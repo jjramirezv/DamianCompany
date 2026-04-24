@@ -79,7 +79,11 @@ class ProductoResource extends Resource
                             ->label('Precio por Docena (Por Mayor)')
                             ->numeric()
                             ->prefix('S/'),
-                    ])->columns(3),
+                        Forms\Components\Toggle::make('mostrar_precio')
+                            ->label('Mostrar precio al público')
+                            ->default(true)
+                            ->helperText('Apágalo si quieres que el cliente pregunte por el precio.'),
+                    ])->columns(4),
 
                 // BLOQUE 3: INVENTARIO Y ALERTAS
                 Forms\Components\Section::make('Control de Inventario')

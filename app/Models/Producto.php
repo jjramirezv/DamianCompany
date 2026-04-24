@@ -11,7 +11,7 @@ class Producto extends Model
     use HasFactory, HasCloudinaryFiles;
 
     protected $fillable = [
-        'nombre', 'codigo', 'descripcion', 'precio', 'stock', 'imagen', 
+        'nombre', 'codigo', 'descripcion', 'precio', 'mostrar_precio', 'stock', 'imagen', 
         'destacado', 'categoria_id', 'marca_id', 'ficha_tecnica',
         'precio_compra', 'precio_docena', 'stock_min', 'estado', 'especificaciones'
     ];

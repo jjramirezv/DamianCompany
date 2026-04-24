@@ -124,9 +124,15 @@
                                     {{ $producto->nombre }}
                                 </a>
 
-                                <div class="text-xl md:text-2xl font-black text-damian-green my-2 flex-grow">
-                                    S/ {{ number_format($producto->precio, 2) }}
-                                </div>
+                                @if($producto->mostrar_precio)
+                                    <div class="text-xl md:text-2xl font-black text-damian-green my-2 flex-grow">
+                                        S/ {{ number_format($producto->precio, 2) }}
+                                    </div>
+                                @else
+                                    <div class="text-sm md:text-base font-bold text-damian-gray_mid my-2 flex-grow italic flex items-center">
+                                        Precio a consultar
+                                    </div>
+                                @endif
 
                                 <div class="mt-auto pt-3 md:pt-4 border-t border-white/5">
                                     <a href="https://wa.me/51964493400?text={{ urlencode('Hola, deseo cotizar el producto: ' . $producto->nombre) }}" target="_blank" class="w-full bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white px-3 py-2 md:py-2.5 rounded-lg transition-all border border-[#25D366]/30 hover:border-transparent flex items-center justify-center gap-2 group/wa">
