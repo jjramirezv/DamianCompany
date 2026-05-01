@@ -17,6 +17,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 bg-damian-card border border-white/5 rounded-3xl p-6 md:p-10 shadow-2xl">
             
+            <!-- COLUMNA DE LA IMAGEN -->
             <div class="lg:col-span-5 flex flex-col items-center justify-center bg-white rounded-2xl p-8 relative overflow-hidden shadow-inner h-[400px] md:h-[500px]">
                 @if($producto->marca)
                     <div class="absolute top-4 left-4 opacity-30 w-24">
@@ -35,6 +36,7 @@
                 @endif
             </div>
 
+            <!-- COLUMNA DE LA INFORMACIÓN -->
             <div class="lg:col-span-7 flex flex-col">
                 <div class="mb-6">
                     <span class="inline-block px-3 py-1 bg-damian-blue/10 text-damian-blue text-[10px] font-black uppercase tracking-widest rounded-full border border-damian-blue/20 mb-4">
@@ -43,13 +45,26 @@
                     <h1 class="text-3xl md:text-5xl font-black text-white leading-tight mb-6">
                         {{ $producto->nombre }}
                     </h1>
-                    </div>
+                </div>
 
-                <div class="mb-8 prose prose-invert max-w-none text-damian-gray_light">
+                <!-- DESCRIPCIÓN BREVE -->
+                <div class="mb-6 prose prose-invert max-w-none text-damian-gray_light">
                     <h3 class="text-white font-bold mb-2 uppercase tracking-wider text-xs border-b border-white/10 pb-2">Descripción del Equipo</h3>
                     <p class="leading-relaxed whitespace-pre-line">{{ $producto->descripcion ?? 'No hay descripción disponible para este producto.' }}</p>
                 </div>
 
+                <!-- NUEVO BLOQUE: ESPECIFICACIONES TÉCNICAS COMPLETAS -->
+                @if($producto->especificaciones)
+                    <div class="mb-8 bg-white/5 border border-white/10 p-5 rounded-xl prose prose-invert max-w-none text-damian-gray_light">
+                        <h3 class="text-damian-green font-bold mb-3 uppercase tracking-wider text-xs border-b border-white/10 pb-2 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Especificaciones Técnicas
+                        </h3>
+                        <p class="leading-relaxed whitespace-pre-line text-sm">{{ $producto->especificaciones }}</p>
+                    </div>
+                @endif
+
+                <!-- BOTONES DE ACCIÓN -->
                 <div class="mt-auto pt-6 border-t border-white/5 flex flex-col sm:flex-row gap-4">
                     
                     <a href="https://wa.me/51964493400?text={{ urlencode('Hola DAMIAN COMPANY, me interesa cotizar el equipo: ' . $producto->nombre . ' (CÓDIGO: ' . $producto->codigo . ').') }}" target="_blank" class="flex-1 flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1EBE57] text-white px-8 py-4 rounded-xl font-black text-lg transition-all shadow-[0_10px_20px_rgba(37,211,102,0.3)] hover:-translate-y-1">
