@@ -73,6 +73,11 @@
                     
                     <a href="/servicios" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('servicios') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Servicios</a>
                     <a href="/proyectos" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('proyectos') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Proyectos</a>
+                    <a href="https://academia.damiancompany.com.pe" 
+                    target="_blank" 
+                    class="px-5 py-2 rounded-full text-sm font-bold text-damian-gray_light hover:text-damian-blue hover:bg-damian-blue/10 transition-all flex items-center gap-2">
+                        Academia
+                    </a>
                     <a href="/nosotros" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('nosotros') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Nosotros</a>
                 </nav>
 
@@ -122,11 +127,9 @@
             <a href="/proyectos" class="text-white font-bold text-lg py-2 border-b border-white/5">Proyectos</a>
             <a href="https://academia.damiancompany.com.pe" 
             target="_blank" 
-            class="px-5 py-2 rounded-full text-sm font-bold text-damian-gray_light hover:text-damian-blue hover:bg-damian-blue/10 transition-all flex items-center gap-2">
-                <svg class="w-4 h-4 text-damian-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-                Academia
+            class="text-damian-blue font-bold text-lg py-3 border-b border-white/5 flex justify-between items-center group">
+                Academia 
+                <span class="bg-damian-blue/10 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-tighter">Nuevo</span>
             </a>
             <a href="/nosotros" class="text-white font-bold text-lg py-2">Nosotros</a>
         </div>
