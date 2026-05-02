@@ -27,7 +27,7 @@
                     <svg class="w-3 h-3 text-damian-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> 
                     <span>964 493 400</span>
                 </a>
-                <a href="tel:98756491" class="hidden sm:flex items-center gap-2 hover:text-damian-green transition-colors">
+                <a href="tel:987564941" class="hidden sm:flex items-center gap-2 hover:text-damian-green transition-colors">
                     <span>987 564 941</span>
                 </a>
                 <a href="tel:950705734" class="hidden md:flex items-center gap-2 hover:text-damian-green transition-colors">
@@ -73,11 +73,15 @@
                     
                     <a href="/servicios" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('servicios') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Servicios</a>
                     <a href="/proyectos" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('proyectos') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Proyectos</a>
+                    
+                    {{-- ACADEMIA DESKTOP --}}
                     <a href="https://academia.damiancompany.com.pe" 
-                    target="_blank" 
-                    class="px-5 py-2 rounded-full text-sm font-bold text-damian-gray_light hover:text-damian-blue hover:bg-damian-blue/10 transition-all flex items-center gap-2">
+                       target="_blank" 
+                       class="px-5 py-2 rounded-full text-sm font-bold text-damian-gray_light hover:text-damian-blue hover:bg-damian-blue/10 transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4 text-damian-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                         Academia
                     </a>
+
                     <a href="/nosotros" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('nosotros') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Nosotros</a>
                 </nav>
 
@@ -93,6 +97,7 @@
             </button>
         </div>
 
+        {{-- MENÚ MÓVIL CORREGIDO --}}
         <div x-show="mobileMenu" 
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 -translate-y-4"
@@ -125,12 +130,15 @@
 
             <a href="/servicios" class="text-white font-bold text-lg py-2 border-b border-white/5">Servicios</a>
             <a href="/proyectos" class="text-white font-bold text-lg py-2 border-b border-white/5">Proyectos</a>
+            
+            {{-- ACADEMIA MÓVIL --}}
             <a href="https://academia.damiancompany.com.pe" 
-            target="_blank" 
-            class="text-damian-blue font-bold text-lg py-3 border-b border-white/5 flex justify-between items-center group">
+               target="_blank" 
+               class="text-damian-blue font-bold text-lg py-3 border-b border-white/5 flex justify-between items-center group">
                 Academia 
                 <span class="bg-damian-blue/10 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-tighter">Nuevo</span>
             </a>
+
             <a href="/nosotros" class="text-white font-bold text-lg py-2">Nosotros</a>
         </div>
     </header>
@@ -159,6 +167,10 @@
                     <li><a href="/tienda" class="text-damian-gray_light hover:text-damian-green transition-colors">Catálogo de Productos</a></li>
                     <li><a href="/servicios" class="text-damian-gray_light hover:text-damian-green transition-colors">Servicio Técnico</a></li>
                     <li><a href="/nosotros" class="text-damian-gray_light hover:text-damian-green transition-colors">Nosotros</a></li>
+                    
+                    {{-- ACADEMIA FOOTER --}}
+                    <li><a href="https://academia.damiancompany.com.pe" target="_blank" class="text-damian-gray_light hover:text-damian-blue transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-damian-blue"></span> Plataforma Academia</a></li>
+
                     <li class="pt-3">
                         <a href="https://forms.gle/a1UfnTH966vMBHsb6" target="_blank" class="inline-flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-damian-green p-3 rounded-xl transition-all duration-300 group w-full sm:w-auto justify-center sm:justify-start">
                             <svg class="w-6 h-6 text-damian-green group-hover:scale-110 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
