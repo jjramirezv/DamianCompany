@@ -1,8 +1,25 @@
 @php
-    // Obtenemos los clientes y los servicios para esta vista
+    // Obtenemos los clientes de la base de datos
     $clientesDb = \App\Models\Cliente::all();
+    
     // Asumo que ya mandabas $serviciosDb desde el controlador, o si no, descomenta la siguiente línea:
     // $serviciosDb = \App\Models\Servicio::all(); 
+
+    // 🚀 OPTIMIZACIÓN PARA CLOUDINARY: 
+    // Mapeamos los clientes para extraer la URL de la imagen una SOLA vez.
+    // Usamos (object) para poder seguir usando la sintaxis $cliente->nombre en el HTML.
+    $clientesOptimizados = $clientesDb->map(function($cliente) {
+        return (object) [
+            'nombre' => $cliente->nombre,
+            'logo_url' => $cliente->logo ? Storage::url($cliente->logo) : null
+        ];
+    });
+
+    // Mapeamos los servicios para hacer exactamente lo mismo
+    $serviciosOptimizados = $serviciosDb->map(function($servicio) {
+        $servicio->imagen_url = $servicio->imagen ? Storage::url($servicio->imagen) : null;
+        return $servicio;
+    });
 @endphp
 
 <x-layouts.app>
@@ -51,13 +68,13 @@
             <div class="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-damian-darker to-transparent z-10 pointer-events-none"></div>
             <div class="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-damian-darker to-transparent z-10 pointer-events-none"></div>
             
-            <div class="flex animate-scroll gap-12 w-max items-center px-4" style="--track-width: calc(-250px * {{ max($clientesDb->count(), 1) }});">
-                @if($clientesDb->count() > 0)
+            <div class="flex animate-scroll gap-12 w-max items-center px-4" style="--track-width: calc(-250px * {{ max($clientesOptimizados->count(), 1) }});">
+                @if($clientesOptimizados->count() > 0)
                     @for ($i = 0; $i < 8; $i++)
-                        @foreach($clientesDb as $cliente)
+                        @foreach($clientesOptimizados as $cliente)
                             <div class="w-[200px] h-[80px] flex items-center justify-center shrink-0 transition-all duration-300 hover:scale-110 opacity-70 hover:opacity-100">
-                                @if($cliente->logo)
-                                    <img src="{{ Storage::url($cliente->logo) }}" alt="{{ $cliente->nombre }}" class="max-h-full max-w-full object-contain">
+                                @if($cliente->logo_url)
+                                    <img src="{{ $cliente->logo_url }}" alt="{{ $cliente->nombre }}" class="max-h-full max-w-full object-contain">
                                 @else
                                     <span class="text-xl font-black text-white tracking-widest uppercase text-center">{{ $cliente->nombre }}</span>
                                 @endif
@@ -72,7 +89,7 @@
     </section>
 
     <section class="py-24 max-w-7xl mx-auto px-6 relative z-10">
-        @forelse($serviciosDb as $servicio)
+        @forelse($serviciosOptimizados as $servicio)
             <div class="flex flex-col {{ $loop->iteration % 2 == 0 ? 'md:flex-row-reverse' : 'md:flex-row' }} items-center gap-10 md:gap-20 mb-32 last:mb-0 group">
                 
                 <div class="w-full md:w-1/2">
@@ -98,8 +115,8 @@
                             <div class="absolute inset-0 w-full h-full contenedor-video">
                                 {!! $servicio->codigo_embed !!}
                             </div>
-                        @elseif($servicio->imagen)
-                            <img src="{{ Storage::url($servicio->imagen) }}" alt="{{ $servicio->titulo }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+                        @elseif($servicio->imagen_url)
+                            <img src="{{ $servicio->imagen_url }}" alt="{{ $servicio->titulo }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
                         @endif
                     </div>
                 </div>

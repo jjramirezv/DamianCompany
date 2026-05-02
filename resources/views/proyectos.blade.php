@@ -1,3 +1,16 @@
+@php
+    // Obtenemos los proyectos de la base de datos (si no vienen del controlador)
+    // $proyectosDb = \App\Models\Proyecto::all();
+
+    // 🚀 OPTIMIZACIÓN PARA CLOUDINARY:
+    // Mapeamos la colección para generar las URLs de las imágenes una sola vez.
+    // Esto evita que el Rate Limit de Cloudinary se agote al recorrer el loop.
+    $proyectosOptimizados = $proyectosDb->map(function($proyecto) {
+        $proyecto->imagen_url = $proyecto->imagen ? Storage::url($proyecto->imagen) : null;
+        return $proyecto;
+    });
+@endphp
+
 <x-layouts.app>
     <style>
         /* Forzamos a que cualquier video de YouTube llene el contenedor horizontal */
@@ -30,13 +43,13 @@
     </section>
 
     <section class="py-24 max-w-7xl mx-auto px-6 relative z-10">
-        @if($proyectosDb->isEmpty())
+        @if($proyectosOptimizados->isEmpty())
             <div class="text-center py-20 bg-damian-card rounded-3xl border border-white/5 shadow-2xl">
                 <p class="text-damian-gray_mid">Sube tus proyectos desde el panel de administración.</p>
             </div>
         @else
             <div class="flex flex-col gap-24">
-                @foreach($proyectosDb as $proyecto)
+                @foreach($proyectosOptimizados as $proyecto)
                     <div class="flex flex-col {{ $loop->iteration % 2 == 0 ? 'md:flex-row-reverse' : 'md:flex-row' }} items-center gap-10 md:gap-16 group">
                         
                         <div class="w-full md:w-1/2">
@@ -63,8 +76,9 @@
                                     <div class="absolute inset-0 w-full h-full contenedor-video">
                                         {!! $proyecto->codigo_embed !!}
                                     </div>
-                                @elseif($proyecto->imagen)
-                                    <img src="{{ Storage::url($proyecto->imagen) }}" alt="{{ $proyecto->titulo }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                @elseif($proyecto->imagen_url)
+                                    {{-- ✅ Usamos la URL pre-procesada --}}
+                                    <img src="{{ $proyecto->imagen_url }}" alt="{{ $proyecto->titulo }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white/20">Sin multimedia</div>
                                 @endif
@@ -79,13 +93,3 @@
     </section>
 
 </x-layouts.app>
-<style>
-    /* Forzamos a que cualquier video de YouTube llene todo el espacio */
-    .contenedor-video iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100% !important;
-        height: 100% !important;
-    }
-</style>
