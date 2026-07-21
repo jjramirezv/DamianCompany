@@ -1,5 +1,8 @@
 @php
     $categoriasDb = \App\Models\Categoria::whereNull('parent_id')->take(6)->get();
+    $categoriasNavbar = \App\Models\Categoria::with([
+        'subCategorias' => fn ($query) => $query->orderBy('nombre'),
+    ])->whereNull('parent_id')->orderBy('nombre')->get();
     $marcasDbRaw = \App\Models\Marca::all();
 
     // 🚀 OPTIMIZACIÓN CLOUDINARY: Pre-procesamos las URLs de los logos
@@ -92,14 +95,46 @@
                     <a href="/" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->is('/') ? 'bg-damian-blue/20 text-damian-blue' : 'text-damian-gray_light hover:text-white' }}">Inicio</a>
                     
                     <div @mouseenter="megaMenu = true" @mouseleave="megaMenu = false" class="relative z-50">
-                        <button class="px-5 py-2 rounded-full text-sm font-bold text-damian-gray_light hover:text-white flex items-center gap-1 transition-all">
+                        <button type="button" @click="megaMenu = !megaMenu" :aria-expanded="megaMenu" aria-controls="tienda-menu-desktop" class="px-5 py-2 rounded-full text-sm font-bold text-damian-gray_light hover:text-white flex items-center gap-1 transition-all">
                             Tienda <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="megaMenu" x-transition.opacity.duration.300ms class="absolute left-1/2 -translate-x-1/2 top-[100%] w-48 mt-4 bg-damian-darker/95 backdrop-blur-xl border border-damian-blue/30 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] py-2 flex flex-col overflow-hidden" style="display: none;">
-                            <a href="/tienda?cat=agro-forestal" class="px-5 py-3 text-[11px] font-bold text-damian-gray_light hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors border-l-2 border-transparent hover:border-damian-green">Agro-Forestal</a>
-                            <a href="/tienda?cat=maquinarias" class="px-5 py-3 text-[11px] font-bold text-damian-gray_light hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors border-l-2 border-transparent hover:border-damian-blue">Maquinarias</a>
-                            <a href="/tienda?cat=construccion" class="px-5 py-3 text-[11px] font-bold text-damian-gray_light hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors border-l-2 border-transparent hover:border-damian-green">Construcción</a>
-                            <a href="/tienda?cat=especializados" class="px-5 py-3 text-[11px] font-bold text-damian-gray_light hover:text-white hover:bg-white/5 uppercase tracking-wider transition-colors border-l-2 border-transparent hover:border-damian-blue">Electrónica</a>
+                        <div id="tienda-menu-desktop" x-show="megaMenu" x-transition.opacity.duration.300ms @click.outside="megaMenu = false" class="absolute left-1/2 -translate-x-1/2 top-[100%] w-[min(760px,calc(100vw-3rem))] mt-4 bg-damian-darker/95 backdrop-blur-xl border border-damian-blue/30 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-5 overflow-hidden" style="display: none;">
+                            <div class="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
+                                <div>
+                                    <p class="text-xs font-black uppercase tracking-[0.18em] text-white">Categorías de productos</p>
+                                    <p class="mt-1 text-[11px] text-damian-gray_mid">Selecciona una categoría o especialidad</p>
+                                </div>
+                                <a href="{{ route('tienda') }}" class="text-xs font-bold text-damian-blue transition-colors hover:text-white">Ver toda la tienda →</a>
+                            </div>
+
+                            @if($categoriasNavbar->isNotEmpty())
+                                <div class="grid grid-cols-2 gap-x-5 gap-y-6 xl:grid-cols-4">
+                                    @foreach($categoriasNavbar as $categoria)
+                                        <div class="min-w-0">
+                                            <a href="{{ route('tienda', ['cat' => \Illuminate\Support\Str::slug($categoria->nombre)]) }}" class="group flex items-center gap-2 border-l-2 border-damian-green pl-3 text-xs font-black uppercase tracking-wider text-white transition-colors hover:text-damian-green">
+                                                <span class="truncate">{{ $categoria->nombre }}</span>
+                                                <svg class="h-3.5 w-3.5 shrink-0 opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                            </a>
+
+                                            @if($categoria->subCategorias->isNotEmpty())
+                                                <ul class="mt-3 space-y-1">
+                                                    @foreach($categoria->subCategorias as $subcategoria)
+                                                        <li>
+                                                            <a href="{{ route('tienda', ['cat' => \Illuminate\Support\Str::slug($subcategoria->nombre)]) }}" class="block rounded-lg px-3 py-2 text-xs text-damian-gray_light transition-all hover:bg-white/5 hover:pl-4 hover:text-damian-blue">
+                                                                {{ $subcategoria->nombre }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p class="mt-3 pl-3 text-[11px] italic text-damian-gray_mid">Ver productos</p>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="py-4 text-center text-sm text-damian-gray_mid">Aún no hay categorías disponibles.</p>
+                            @endif
                         </div>
                     </div>
                     
@@ -147,15 +182,33 @@
             <a href="/" class="text-white font-bold text-lg py-2 border-b border-white/5">Inicio</a>
             
             <div x-data="{ tiendaMobile: false }" class="border-b border-white/5 py-2">
-                <button @click="tiendaMobile = !tiendaMobile" class="w-full flex justify-between items-center text-white font-bold text-lg">
-                    Catálogo
+                <button type="button" @click="tiendaMobile = !tiendaMobile" :aria-expanded="tiendaMobile" aria-controls="tienda-menu-mobile" class="w-full flex justify-between items-center text-white font-bold text-lg">
+                    Tienda
                     <svg :class="tiendaMobile ? 'rotate-180 text-damian-green' : ''" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
-                <div x-show="tiendaMobile" x-collapse class="flex flex-col gap-3 pl-4 mt-4">
-                    <a href="/tienda?cat=agro-forestal" class="text-damian-gray_light hover:text-damian-green text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-damian-green"></span> Agro-Forestal</a>
-                    <a href="/tienda?cat=maquinarias" class="text-damian-gray_light hover:text-damian-blue text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-damian-blue"></span> Maquinarias</a>
-                    <a href="/tienda?cat=construccion" class="text-damian-gray_light hover:text-damian-green text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-damian-green"></span> Construcción</a>
-                    <a href="/tienda?cat=especializados" class="text-damian-gray_light hover:text-damian-blue text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-damian-blue"></span> Electrónica</a>
+                <div id="tienda-menu-mobile" x-show="tiendaMobile" x-collapse class="mt-4 rounded-xl border border-white/10 bg-damian-darker/60 p-3">
+                    <a href="{{ route('tienda') }}" class="mb-3 flex items-center justify-between rounded-lg bg-damian-blue/10 px-3 py-2.5 text-sm font-bold text-damian-blue">
+                        Ver todos los productos <span aria-hidden="true">→</span>
+                    </a>
+
+                    @foreach($categoriasNavbar as $categoria)
+                        <div class="border-t border-white/5 py-3 first:border-t-0">
+                            <a href="{{ route('tienda', ['cat' => \Illuminate\Support\Str::slug($categoria->nombre)]) }}" class="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white transition-colors hover:text-damian-green">
+                                <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-damian-green"></span>
+                                {{ $categoria->nombre }}
+                            </a>
+
+                            @if($categoria->subCategorias->isNotEmpty())
+                                <div class="ml-3 mt-2 flex flex-col border-l border-white/10 pl-4">
+                                    @foreach($categoria->subCategorias as $subcategoria)
+                                        <a href="{{ route('tienda', ['cat' => \Illuminate\Support\Str::slug($subcategoria->nombre)]) }}" class="py-2 text-sm text-damian-gray_light transition-colors hover:text-damian-blue">
+                                            {{ $subcategoria->nombre }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
