@@ -38,6 +38,30 @@
         }
         .scanlines { background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(27, 177, 227, 0.1) 50%, rgba(27, 177, 227, 0.1)); background-size: 100% 4px; pointer-events: none; }
         .hologram-glow { animation: float 4s ease-in-out infinite, flicker 5s infinite; }
+
+        @keyframes product-float {
+            0%, 100% { transform: translateY(-8px) rotate(-0.35deg); }
+            50% { transform: translateY(-28px) rotate(0.35deg); }
+        }
+
+        @keyframes hologram-spin {
+            from { transform: perspective(500px) rotateX(68deg) rotateZ(0deg); }
+            to { transform: perspective(500px) rotateX(68deg) rotateZ(360deg); }
+        }
+
+        .hero-product-float {
+            animation: product-float 4.8s ease-in-out infinite;
+            filter: drop-shadow(0 28px 28px rgba(0, 0, 0, 0.58));
+        }
+
+        .hero-hologram-disc {
+            background: conic-gradient(from 0deg, transparent 0 12%, rgba(27, 177, 227, 0.9) 18%, transparent 26% 48%, rgba(34, 161, 94, 0.8) 56%, transparent 65% 86%, rgba(27, 177, 227, 0.8) 94%, transparent);
+            animation: hologram-spin 7s linear infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-product-float, .hero-hologram-disc { animation: none; }
+        }
         
         @keyframes scroll {
             0% { transform: translateX(0); }
@@ -261,17 +285,26 @@
                 </div>
             </div>
 
-            <div class="hidden lg:flex relative h-[500px] items-center justify-center">
-                <div class="absolute bottom-10 w-[300px] h-[300px] bg-damian-blue/20 rounded-full blur-[80px] pointer-events-none z-0 mix-blend-screen"></div>
-                <div class="absolute bottom-16 w-64 h-16 rounded-[100%] border-2 border-damian-blue/30 shadow-[0_0_50px_rgba(27,177,227,0.3)] bg-damian-darker/80 z-10 flex items-center justify-center">
-                    <div class="w-48 h-10 rounded-[100%] border border-damian-blue/50 bg-damian-blue/10 animate-pulse"></div>
+            <div class="hidden lg:flex relative h-[580px] items-center justify-center" aria-label="Motocultor Damian suspendido sobre una plataforma holográfica">
+                <div class="absolute inset-x-8 top-6 bottom-8 rounded-full bg-gradient-to-b from-damian-green/10 via-damian-blue/10 to-transparent blur-[70px] pointer-events-none"></div>
+
+                <div class="absolute bottom-20 left-1/2 h-64 w-56 -translate-x-1/2 bg-gradient-to-t from-damian-blue/20 via-damian-blue/5 to-transparent blur-2xl pointer-events-none" style="clip-path: polygon(24% 100%, 76% 100%, 100% 0, 0 0);"></div>
+
+                <div class="absolute bottom-4 left-1/2 h-24 w-[390px] -translate-x-1/2 pointer-events-none">
+                    <div class="absolute inset-x-5 bottom-0 h-16 rounded-[100%] bg-damian-blue/15 blur-xl"></div>
+                    <div class="hero-hologram-disc absolute inset-0 rounded-[100%] border border-damian-blue/70 shadow-[0_0_28px_rgba(27,177,227,0.7),inset_0_0_24px_rgba(27,177,227,0.25)]"></div>
+                    <div class="absolute inset-x-12 bottom-4 h-12 rounded-[100%] border border-damian-green/60 bg-damian-blue/5 shadow-[0_0_20px_rgba(34,161,94,0.45)] animate-pulse"></div>
+                    <div class="absolute inset-x-28 bottom-7 h-7 rounded-[100%] border border-damian-blue/60 bg-damian-blue/10"></div>
                 </div>
-                <div class="relative z-20 hologram-glow pb-20">
-                    <svg class="w-64 h-64 text-damian-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="0.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                </div>
+
+                <img
+                    src="{{ asset('img/hero-equipos-agricolas.png') }}"
+                    alt="Motocultor Damian acompañado de una motoguadaña y una mochila fumigadora"
+                    width="1536"
+                    height="1024"
+                    fetchpriority="high"
+                    class="hero-product-float relative top-10 z-10 h-auto w-full max-w-[620px] object-contain"
+                >
             </div>
         </div>
     </section>
