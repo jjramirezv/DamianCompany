@@ -9,6 +9,12 @@
             'logo_url' => $marca->logo ? Storage::url($marca->logo) : null
         ];
     });
+
+    // Previsualización de los proyectos más recientes para la portada.
+    $proyectosDestacados = \App\Models\Proyecto::latest()->take(3)->get()->map(function($proyecto) {
+        $proyecto->imagen_url = $proyecto->imagen ? Storage::url($proyecto->imagen) : null;
+        return $proyecto;
+    });
 @endphp
 
 <!DOCTYPE html>
@@ -250,6 +256,79 @@
     </section>
 
     <livewire:productos-destacados />
+
+    {{-- PREVISUALIZACIÓN DE PROYECTOS --}}
+    <section class="relative overflow-hidden border-t border-white/5 bg-damian-darker py-16 md:py-24">
+        <div class="absolute inset-0 opacity-[0.07] pointer-events-none" style="background-image: linear-gradient(#1bb1e3 1px, transparent 1px), linear-gradient(90deg, #1bb1e3 1px, transparent 1px); background-size: 48px 48px;"></div>
+        <div class="absolute -top-32 right-0 h-80 w-80 rounded-full bg-damian-blue/10 blur-[110px] pointer-events-none"></div>
+        <div class="absolute -bottom-40 left-0 h-96 w-96 rounded-full bg-damian-green/10 blur-[130px] pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="mb-10 md:mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div class="max-w-2xl">
+                    <span class="font-mono text-sm tracking-widest uppercase text-damian-green">Experiencia en acción</span>
+                    <h2 class="mt-3 text-3xl md:text-5xl font-black leading-tight text-white">
+                        Proyectos que convierten<br class="hidden sm:block">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-damian-blue to-damian-green">desafíos en resultados.</span>
+                    </h2>
+                    <p class="mt-5 max-w-xl text-sm md:text-base leading-relaxed text-damian-gray_light">
+                        Conoce algunas de nuestras entregas técnicas, demostraciones y soluciones implementadas.
+                    </p>
+                </div>
+
+                <a href="{{ route('proyectos') }}" class="group inline-flex w-fit items-center gap-3 rounded-xl border border-white/15 px-5 py-3 text-sm font-bold text-white transition-all hover:border-damian-blue/60 hover:bg-damian-blue/10">
+                    Ver todos los proyectos
+                    <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </a>
+            </div>
+
+            @if($proyectosDestacados->isNotEmpty())
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    @foreach($proyectosDestacados as $proyecto)
+                        <article class="group overflow-hidden rounded-2xl border border-white/10 bg-damian-card shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-damian-blue/40">
+                            <div class="relative aspect-video overflow-hidden bg-damian-dark">
+                                @if($proyecto->codigo_embed)
+                                    <div class="absolute inset-0 [&>iframe]:h-full [&>iframe]:w-full">
+                                        {!! $proyecto->codigo_embed !!}
+                                    </div>
+                                @elseif($proyecto->imagen_url)
+                                    <img src="{{ $proyecto->imagen_url }}" alt="{{ $proyecto->titulo }}" loading="lazy" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                @else
+                                    <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-damian-blue/10 to-damian-green/10 text-white/30">
+                                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.61l-.318.18a6 6 0 01-3.86.61l-1.69-.338a2 2 0 00-1.833.55M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.414 3.414H4.828c-1.78 0-2.678-2.153-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                        </svg>
+                                    </div>
+                                @endif
+                                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-damian-card via-transparent to-transparent"></div>
+                            </div>
+
+                            <div class="p-6">
+                                <h3 class="text-xl font-black leading-snug text-white transition-colors group-hover:text-damian-blue">
+                                    {{ $proyecto->titulo }}
+                                </h3>
+                                <p class="mt-3 text-sm leading-relaxed text-damian-gray_light">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($proyecto->descripcion), 125) }}
+                                </p>
+                                <a href="{{ route('proyectos') }}" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-damian-green transition-colors hover:text-white">
+                                    Conocer el proyecto
+                                    <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            @else
+                <div class="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-6 py-12 text-center">
+                    <p class="text-damian-gray_mid">Próximamente compartiremos nuestros proyectos más recientes.</p>
+                </div>
+            @endif
+        </div>
+    </section>
 
     <footer class="bg-damian-darker pt-12 md:pt-16 pb-8 border-t border-white/5 relative z-10">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-12 mb-10 md:mb-12">
