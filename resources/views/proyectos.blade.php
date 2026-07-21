@@ -1,95 +1,165 @@
 @php
-    // Obtenemos los proyectos de la base de datos (si no vienen del controlador)
-    // $proyectosDb = \App\Models\Proyecto::all();
+    $proyectosOptimizados = $proyectosDb->map(function ($proyecto) {
+        $imagenes = collect($proyecto->imagenes ?? [])
+            ->filter(fn ($imagen) => is_string($imagen) && $imagen !== '');
 
-    // 🚀 OPTIMIZACIÓN PARA CLOUDINARY:
-    // Mapeamos la colección para generar las URLs de las imágenes una sola vez.
-    // Esto evita que el Rate Limit de Cloudinary se agote al recorrer el loop.
-    $proyectosOptimizados = $proyectosDb->map(function($proyecto) {
-        $proyecto->imagen_url = $proyecto->imagen ? Storage::url($proyecto->imagen) : null;
+        if ($imagenes->isEmpty() && $proyecto->imagen) {
+            $imagenes->push($proyecto->imagen);
+        }
+
+        $proyecto->galeria = $imagenes
+            ->take(5)
+            ->map(fn ($imagen) => [
+                'tipo' => 'imagen',
+                'url' => Storage::disk('cloudinary')->url($imagen),
+            ])
+            ->values();
+
+        if ($proyecto->youtube_embed_url) {
+            $proyecto->galeria->push([
+                'tipo' => 'video',
+                'url' => $proyecto->youtube_embed_url,
+            ]);
+        }
+
         return $proyecto;
     });
 @endphp
 
 <x-layouts.app>
-    <style>
-        /* Forzamos a que cualquier video de YouTube llene el contenedor horizontal */
-        .contenedor-video iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100% !important;
-            height: 100% !important;
-        }
-    </style>
+    <section class="relative overflow-hidden border-b border-white/5 bg-damian-dark pb-20 pt-32">
+        <div class="pointer-events-none absolute inset-0 opacity-10" style="background-image: linear-gradient(#0f404f 1px, transparent 1px), linear-gradient(90deg, #0f404f 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="pointer-events-none absolute left-1/2 top-0 z-0 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-damian-green/10 blur-[120px]"></div>
 
-    <section class="relative pt-32 pb-20 overflow-hidden bg-damian-dark border-b border-white/5">
-        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: linear-gradient(#0f404f 1px, transparent 1px), linear-gradient(90deg, #0f404f 1px, transparent 1px); background-size: 40px 40px;"></div>
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-damian-green/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
-
-        <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
-            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-damian-green/10 border border-damian-green/20 text-damian-green text-xs font-black tracking-widest uppercase mb-6">
-                <span class="w-2 h-2 rounded-full bg-damian-green animate-pulse"></span>
+        <div class="relative z-10 mx-auto max-w-7xl px-6 text-center">
+            <span class="mb-6 inline-flex items-center gap-2 rounded-full border border-damian-green/20 bg-damian-green/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-damian-green">
+                <span class="h-2 w-2 animate-pulse rounded-full bg-damian-green"></span>
                 Nuestra Experiencia
             </span>
-            <h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
+            <h1 class="mb-6 text-4xl font-black leading-tight text-white md:text-6xl">
                 Proyectos <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-damian-blue to-damian-green">Ejecutados.</span>
+                <span class="bg-gradient-to-r from-damian-blue to-damian-green bg-clip-text text-transparent">Ejecutados.</span>
             </h1>
-            <p class="text-lg text-damian-gray_light max-w-2xl mx-auto leading-relaxed">
+            <p class="mx-auto max-w-2xl text-lg leading-relaxed text-damian-gray_light">
                 Revisa nuestro portafolio de entregas técnicas, demostraciones de maquinaria pesada y soluciones implementadas.
             </p>
         </div>
     </section>
 
-    <section class="py-24 max-w-7xl mx-auto px-6 relative z-10">
+    <section class="relative z-10 mx-auto max-w-7xl px-6 py-20 lg:py-24">
         @if($proyectosOptimizados->isEmpty())
-            <div class="text-center py-20 bg-damian-card rounded-3xl border border-white/5 shadow-2xl">
+            <div class="rounded-3xl border border-white/5 bg-damian-card py-20 text-center shadow-2xl">
                 <p class="text-damian-gray_mid">Sube tus proyectos desde el panel de administración.</p>
             </div>
         @else
-            <div class="flex flex-col gap-24">
+            <div class="space-y-16 lg:space-y-24">
                 @foreach($proyectosOptimizados as $proyecto)
-                    <div class="flex flex-col {{ $loop->iteration % 2 == 0 ? 'md:flex-row-reverse' : 'md:flex-row' }} items-center gap-10 md:gap-16 group">
-                        
-                        <div class="w-full md:w-1/2">
-                            <span class="text-[10px] font-bold text-damian-green uppercase tracking-widest mb-4 block">
-                                Portafolio Oficial
-                            </span>
-                            <h2 class="text-3xl md:text-4xl font-black text-white mb-6 leading-tight group-hover:text-damian-blue transition-colors">
-                                {{ $proyecto->titulo }}
-                            </h2>
-                            <p class="text-damian-gray_light leading-relaxed text-lg whitespace-pre-line mb-8">
-                                {{ $proyecto->descripcion }}
-                            </p>
-                            <a href="https://wa.me/51964493400" class="inline-flex items-center gap-2 text-sm font-bold text-white border border-white/20 px-6 py-3 rounded-full hover:bg-white/10 transition-all">
-                                Consultar similar <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    @php
+                        $descripcion = trim($proyecto->descripcion ?? '');
+                        $descripcionLarga = mb_strlen($descripcion) > 420;
+                    @endphp
+
+                    <article
+                        class="grid items-start gap-8 border-b border-white/10 pb-16 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:gap-14 lg:pb-24"
+                        x-data="{ activo: 0, ampliada: null, expandido: false }"
+                        @keydown.escape.window="ampliada = null"
+                    >
+                        <div class="lg:sticky lg:top-28">
+                            <span class="mb-4 block text-[10px] font-bold uppercase tracking-widest text-damian-green">Portafolio Oficial</span>
+                            <h2 class="mb-6 text-3xl font-black leading-tight text-white md:text-4xl">{{ $proyecto->titulo }}</h2>
+
+                            <div class="text-base leading-8 text-damian-gray_light md:text-lg">
+                                <p x-show="!expandido" class="whitespace-pre-line">{{ $descripcionLarga ? Illuminate\Support\Str::limit($descripcion, 420) : $descripcion }}</p>
+                                @if($descripcionLarga)
+                                    <p x-cloak x-show="expandido" class="whitespace-pre-line">{{ $descripcion }}</p>
+                                    <button
+                                        type="button"
+                                        class="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-damian-green transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-damian-green/60"
+                                        @click="expandido = !expandido"
+                                        :aria-expanded="expandido"
+                                    >
+                                        <span x-text="expandido ? 'Ver menos' : 'Ver más'"></span>
+                                        <svg class="h-4 w-4 transition-transform" :class="expandido && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                @endif
+                            </div>
+
+                            <a href="https://wa.me/51964493400" class="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-white/10">
+                                Consultar similar
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0-7 7m7-7H3" /></svg>
                             </a>
                         </div>
 
-                        <div class="w-full md:w-1/2 relative">
-                            <div class="absolute inset-0 bg-gradient-to-tr from-damian-green/20 to-transparent rounded-3xl transform translate-x-4 translate-y-4 -z-10 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500"></div>
-                            
-                            <div class="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-damian-card">
-                                
-                                @if($proyecto->codigo_embed)
-                                    <div class="absolute inset-0 w-full h-full contenedor-video">
-                                        {!! $proyecto->codigo_embed !!}
-                                    </div>
-                                @elseif($proyecto->imagen_url)
-                                    {{-- ✅ Usamos la URL pre-procesada --}}
-                                    <img src="{{ $proyecto->imagen_url }}" alt="{{ $proyecto->titulo }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center text-white/20">Sin multimedia</div>
-                                @endif
-
+                        <div class="min-w-0">
+                            <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-[#061923] shadow-2xl">
+                                <div class="flex aspect-[4/3] min-h-[310px] items-center justify-center sm:min-h-[420px]">
+                                    @forelse($proyecto->galeria as $indice => $medio)
+                                        @if($medio['tipo'] === 'imagen')
+                                            <button
+                                                x-cloak
+                                                x-show="activo === {{ $indice }}"
+                                                type="button"
+                                                class="absolute inset-0 flex h-full w-full cursor-zoom-in items-center justify-center p-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-damian-green sm:p-4"
+                                                @click="ampliada = {{ $indice }}"
+                                                aria-label="Ampliar imagen {{ $indice + 1 }} de {{ $proyecto->titulo }}"
+                                            >
+                                                <img src="{{ $medio['url'] }}" alt="{{ $proyecto->titulo }} — imagen {{ $indice + 1 }}" loading="lazy" class="max-h-full max-w-full object-contain" />
+                                            </button>
+                                        @else
+                                            <div x-cloak x-show="activo === {{ $indice }}" class="absolute inset-0 flex items-center bg-black">
+                                                <iframe class="aspect-video w-full" src="{{ $medio['url'] }}" title="Video de {{ $proyecto->titulo }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                            </div>
+                                        @endif
+                                    @empty
+                                        <div class="flex h-full w-full flex-col items-center justify-center gap-3 text-white/30">
+                                            <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m3 16 5-5 4 4 3-3 6 6M5 20h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" /></svg>
+                                            <span class="text-sm">Sin multimedia</span>
+                                        </div>
+                                    @endforelse
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
+                            @if($proyecto->galeria->count() > 1)
+                                <div class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5" aria-label="Todas las imágenes de {{ $proyecto->titulo }}">
+                                    @foreach($proyecto->galeria as $indice => $medio)
+                                        <button
+                                            type="button"
+                                            class="relative aspect-square w-full overflow-hidden rounded-xl border-2 bg-[#061923] transition-all hover:border-damian-green focus:outline-none focus:ring-2 focus:ring-damian-green/60"
+                                            :class="activo === {{ $indice }} ? 'border-damian-green opacity-100' : 'border-white/10 opacity-70'"
+                                            @click="activo = {{ $indice }}; ampliada = null"
+                                            aria-label="Mostrar {{ $medio['tipo'] === 'video' ? 'video' : 'imagen '.($indice + 1) }} como principal"
+                                        >
+                                            @if($medio['tipo'] === 'imagen')
+                                                <img src="{{ $medio['url'] }}" alt="" loading="lazy" class="h-full w-full object-contain p-1" />
+                                            @else
+                                                <span class="flex h-full w-full items-center justify-center bg-black text-damian-green">
+                                                    <svg class="h-9 w-9" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                                                </span>
+                                            @endif
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <template x-teleport="body">
+                                <div x-cloak x-show="ampliada !== null" x-transition.opacity class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+                                    <button type="button" class="absolute right-5 top-5 rounded-full border border-white/20 bg-black/50 p-3 text-white hover:bg-white/10" @click="ampliada = null" aria-label="Cerrar imagen ampliada">
+                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" /></svg>
+                                    </button>
+                                    @foreach($proyecto->galeria as $indice => $medio)
+                                        @if($medio['tipo'] === 'imagen')
+                                            <img x-cloak x-show="ampliada === {{ $indice }}" src="{{ $medio['url'] }}" alt="{{ $proyecto->titulo }} — imagen ampliada {{ $indice + 1 }}" class="max-h-full max-w-full object-contain" />
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </template>
+
+                        </div>
+                    </article>
                 @endforeach
             </div>
         @endif
     </section>
-
 </x-layouts.app>

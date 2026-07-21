@@ -32,22 +32,54 @@ class ProyectoResource extends Resource
                     ->columnSpanFull(),
                     
                 Forms\Components\Textarea::make('descripcion')
+                    ->label('Descripción del proyecto')
                     ->required()
-                    ->rows(4)
+                    ->rows(10)
+                    ->helperText('Puedes escribir una descripción extensa. En la web se mostrará resumida con la opción “Ver más”.')
                     ->columnSpanFull(),
 
-                Forms\Components\Section::make('Archivo Multimedia')
-                    ->description('Sube una imagen o pega el código de un video. Si pones ambos, el video tendrá prioridad.')
+                Forms\Components\Section::make('Galería multimedia')
+                    ->description('Sube hasta 5 imágenes. La primera será la portada y puedes arrastrarlas para cambiar el orden.')
                     ->schema([
-                        Forms\Components\FileUpload::make('imagen')
+                        Forms\Components\FileUpload::make('imagenes')
+                            ->label('Imágenes del proyecto')
                             ->image()
+                            ->multiple()
+                            ->maxFiles(5)
+                            ->reorderable()
+                            ->appendFiles()
+                            ->panelLayout('grid')
+                            ->imagePreviewHeight('180')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(10240)
                             ->directory('proyectos')
-                            ->disk('cloudinary'),
+                            ->disk('cloudinary')
+                            ->columnSpanFull(),
                             
-                        Forms\Components\Textarea::make('codigo_embed')
-                            ->label('Código de Inserción (Video)')
-                            ->rows(3),
-                    ])->columns(2),
+                        Forms\Components\Textarea::make('video_url')
+                            ->label('Enlace o código iframe de YouTube')
+                            ->rows(3)
+                            ->maxLength(500)
+                            ->placeholder('https://www.youtube.com/watch?v=... o <iframe ...></iframe>')
+                            ->helperText('Opcional. Puedes pegar el enlace de YouTube o el código iframe completo que entrega YouTube.')
+                            ->rules([
+                                function () {
+                                    return function (string $attribute, $value, \Closure $fail): void {
+                                        if (!$value) {
+                                            return;
+                                        }
+
+                                        $proyecto = new Proyecto(['video_url' => trim($value)]);
+
+                                        if (!$proyecto->youtube_embed_url) {
+                                            $fail('Ingresa un enlace o código iframe válido de YouTube.');
+                                        }
+                                    };
+                                },
+                            ])
+                            ->dehydrateStateUsing(fn (?string $state): ?string => $state ? trim($state) : null)
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -59,6 +91,12 @@ class ProyectoResource extends Resource
                     ->label('Título del Proyecto')
                     ->searchable()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('imagenes')
+                    ->label('Galería')
+                    ->formatStateUsing(fn (Proyecto $record): string => count($record->imagenes ?? ($record->imagen ? [$record->imagen] : [])) . ' imagen(es)')
+                    ->badge()
+                    ->color('info'),
                     
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Publicado el')

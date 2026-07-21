@@ -15,7 +15,8 @@
 
     // Previsualización de los proyectos más recientes para la portada.
     $proyectosDestacados = \App\Models\Proyecto::latest()->take(3)->get()->map(function($proyecto) {
-        $proyecto->imagen_url = $proyecto->imagen ? Storage::url($proyecto->imagen) : null;
+        $imagenPortada = collect($proyecto->imagenes ?? [])->filter()->first() ?: $proyecto->imagen;
+        $proyecto->imagen_url = $imagenPortada ? Storage::disk('cloudinary')->url($imagenPortada) : null;
         return $proyecto;
     });
 @endphp
@@ -375,12 +376,10 @@
                     @foreach($proyectosDestacados as $proyecto)
                         <article class="group overflow-hidden rounded-2xl border border-white/10 bg-damian-card shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-damian-blue/40">
                             <div class="relative aspect-video overflow-hidden bg-damian-dark">
-                                @if($proyecto->codigo_embed)
-                                    <div class="absolute inset-0 [&>iframe]:h-full [&>iframe]:w-full">
-                                        {!! $proyecto->codigo_embed !!}
-                                    </div>
-                                @elseif($proyecto->imagen_url)
+                                @if($proyecto->imagen_url)
                                     <img src="{{ $proyecto->imagen_url }}" alt="{{ $proyecto->titulo }}" loading="lazy" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                @elseif($proyecto->youtube_embed_url)
+                                    <iframe class="absolute inset-0 h-full w-full" src="{{ $proyecto->youtube_embed_url }}" title="Video de {{ $proyecto->titulo }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                                 @else
                                     <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-damian-blue/10 to-damian-green/10 text-white/30">
                                         <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

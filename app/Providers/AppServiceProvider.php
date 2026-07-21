@@ -20,10 +20,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureLocalCertificateBundle();
         
         if (config('app.env') === 'production') {
-        \Illuminate\Support\Facades\URL::forceScheme('https');
-        \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
+            URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
+        }
     }
+
+    private function configureLocalCertificateBundle(): void
+    {
+        if (PHP_OS_FAMILY !== 'Windows' || ini_get('curl.cainfo') || ini_get('openssl.cafile')) {
+            return;
+        }
+
+        $candidates = array_filter([
+            env('CLOUDINARY_CA_BUNDLE'),
+            'C:/Program Files/Git/mingw64/etc/ssl/certs/ca-bundle.crt',
+            'C:/xampp/apache/bin/curl-ca-bundle.crt',
+        ]);
+
+        foreach ($candidates as $certificateBundle) {
+            if (is_file($certificateBundle)) {
+                putenv('CURL_CA_BUNDLE='.$certificateBundle);
+                putenv('SSL_CERT_FILE='.$certificateBundle);
+
+                break;
+            }
+        }
     }
 }

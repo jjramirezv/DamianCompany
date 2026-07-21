@@ -14,9 +14,9 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => 'cloudinary',        // Obligamos a usar Cloudinary incluso para lo temporal
+        'disk' => 'local',
         'rules' => 'file|max:12288',   // Máximo 12MB
-        'directory' => 'tmp',
+        'directory' => 'livewire-tmp',
         'middleware' => 'web',         // Usamos solo el middleware web para evitar conflictos de firma
     ],
 
