@@ -64,12 +64,36 @@
                         </div>
                     @endif
                 </div>
+
+                @if($proyecto->flujo_tecnico)
+                    <section class="mt-8" aria-labelledby="flujo-tecnico-titulo">
+                        <div class="mb-4 flex items-start gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-damian-green/15 text-damian-green">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v12m0 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0-8h9a3 3 0 0 1 3 3v2m0 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" /></svg>
+                            </span>
+                            <div>
+                                <h2 id="flujo-tecnico-titulo" class="text-lg font-black text-white">Flujo técnico del proyecto</h2>
+                                <p class="mt-1 text-sm leading-6 text-damian-gray_light">Proceso y etapas considerados durante su desarrollo.</p>
+                            </div>
+                        </div>
+
+                        <a href="{{ Storage::disk('cloudinary')->url($proyecto->flujo_tecnico) }}" target="_blank" rel="noopener noreferrer" class="group relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#061923] p-3 shadow-2xl focus:outline-none focus:ring-2 focus:ring-damian-green sm:p-6" aria-label="Abrir el flujo técnico completo en una nueva pestaña">
+                            <img src="{{ Storage::disk('cloudinary')->url($proyecto->flujo_tecnico) }}" alt="Flujo técnico de {{ $proyecto->titulo }}" loading="lazy" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]" />
+                            <span class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
+                            </span>
+                        </a>
+                    </section>
+                @endif
             </div>
 
             <article class="lg:sticky lg:top-28">
                 <h2 class="mb-4 text-xl font-black text-white">Acerca del proyecto</h2>
                 <div class="whitespace-pre-line text-base leading-7 text-damian-gray_light">{{ $proyecto->descripcion }}</div>
-                <a href="https://wa.me/51964493400" class="mt-7 inline-flex items-center gap-2 rounded-full bg-damian-green px-5 py-2.5 text-sm font-bold text-white transition hover:scale-105">Consultar un proyecto similar</a>
+                <a href="https://wa.me/51964493400?text={{ urlencode('Hola, quisiera consultar sobre un proyecto similar a: '.$proyecto->titulo) }}" target="_blank" rel="noopener noreferrer" class="mt-7 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-[#25D366]/15 transition hover:-translate-y-0.5 hover:bg-[#20bd5a]">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2a9.84 9.84 0 0 0-8.42 14.93L2.05 22l5.2-1.53A9.95 9.95 0 1 0 12.04 2Zm0 17.95a8 8 0 0 1-4.08-1.12l-.3-.18-3.08.91.92-3-.2-.31a7.93 7.93 0 1 1 6.74 3.7Zm4.36-5.94c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19a7.2 7.2 0 0 1-1.33-1.65c-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg>
+                    Consultar por WhatsApp
+                </a>
             </article>
         </section>
 

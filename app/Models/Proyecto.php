@@ -10,7 +10,7 @@ class Proyecto extends Model
     use HasCloudinaryFiles;
 
     protected $fillable = [
-        'titulo', 'resumen', 'descripcion', 'secciones', 'imagen', 'imagenes', 'video_url', 'codigo_embed',
+        'titulo', 'resumen', 'descripcion', 'secciones', 'imagen', 'imagenes', 'video_url', 'codigo_embed', 'flujo_tecnico',
     ];
 
     protected function casts(): array
@@ -23,7 +23,7 @@ class Proyecto extends Model
 
     public function getCloudinaryFields(): array
     {
-        return ['imagen', 'imagenes'];
+        return ['imagen', 'imagenes', 'flujo_tecnico'];
     }
 
     public function getYoutubeEmbedUrlAttribute(): ?string

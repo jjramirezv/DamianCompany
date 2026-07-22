@@ -118,6 +118,23 @@ class ProyectoResource extends Resource
                             })
                             ->columnSpanFull(),
                     ]),
+
+                Forms\Components\Section::make('Flujo técnico del proyecto')
+                    ->description('Sube el diagrama o imagen que explica visualmente cómo se desarrolló el proyecto. Se mostrará debajo de la galería en la página de detalle.')
+                    ->schema([
+                        Forms\Components\FileUpload::make('flujo_tecnico')
+                            ->label('Imagen del flujo técnico')
+                            ->helperText('Utiliza una imagen legible en JPG, PNG o WebP. Este archivo es independiente de las 5 imágenes de la galería.')
+                            ->image()
+                            ->required()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(10240)
+                            ->directory('proyectos/flujos-tecnicos')
+                            ->disk('cloudinary')
+                            ->imagePreviewHeight('260')
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
