@@ -22,6 +22,10 @@ Route::get('/proyectos', function () {
     return view('proyectos', compact('proyectosDb'));
 })->name('proyectos');
 
+Route::get('/proyectos/{proyecto}', function (\App\Models\Proyecto $proyecto) {
+    return view('proyecto-detalle', compact('proyecto'));
+})->name('proyectos.show');
+
 Route::get('/servicios', function () {
     $serviciosDb = \App\Models\Servicio::all();
     $clientesDb = \App\Models\Cliente::all(); 

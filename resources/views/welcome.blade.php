@@ -395,9 +395,9 @@
                                     {{ $proyecto->titulo }}
                                 </h3>
                                 <p class="mt-3 text-sm leading-relaxed text-damian-gray_light">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags($proyecto->descripcion), 125) }}
+                                    {{ $proyecto->resumen ?: \Illuminate\Support\Str::limit(strip_tags($proyecto->descripcion), 125) }}
                                 </p>
-                                <a href="{{ route('proyectos') }}" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-damian-green transition-colors hover:text-white">
+                                <a href="{{ route('proyectos.show', $proyecto) }}" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-damian-green transition-colors hover:text-white">
                                     Conocer el proyecto
                                     <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>

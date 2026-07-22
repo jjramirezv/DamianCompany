@@ -10,12 +10,15 @@ class Proyecto extends Model
     use HasCloudinaryFiles;
 
     protected $fillable = [
-        'titulo', 'descripcion', 'imagen', 'imagenes', 'video_url', 'codigo_embed',
+        'titulo', 'resumen', 'descripcion', 'secciones', 'imagen', 'imagenes', 'video_url', 'codigo_embed',
     ];
 
     protected function casts(): array
     {
-        return ['imagenes' => 'array'];
+        return [
+            'imagenes' => 'array',
+            'secciones' => 'array',
+        ];
     }
 
     public function getCloudinaryFields(): array
@@ -31,8 +34,10 @@ class Proyecto extends Model
             return null;
         }
 
-        if (preg_match('/src=["\']([^"\']+)["\']/', $source, $match)) {
-            $source = html_entity_decode($match[1]);
+        $source = html_entity_decode(trim($source), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        if (preg_match('/\bsrc\s*=\s*["\']([^"\']+)["\']/i', $source, $match)) {
+            $source = $match[1];
         }
 
         $parts = parse_url(trim($source));
@@ -42,7 +47,7 @@ class Proyecto extends Model
 
         if (in_array($host, ['youtu.be', 'www.youtu.be'], true)) {
             $videoId = explode('/', $path)[0] ?? null;
-        } elseif (in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com'], true)) {
+        } elseif (in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'], true)) {
             if ($path === 'watch') {
                 parse_str($parts['query'] ?? '', $query);
                 $videoId = $query['v'] ?? null;
@@ -52,7 +57,7 @@ class Proyecto extends Model
         }
 
         return $videoId && preg_match('/^[A-Za-z0-9_-]{6,20}$/', $videoId)
-            ? "https://www.youtube-nocookie.com/embed/{$videoId}"
+            ? "https://www.youtube.com/embed/{$videoId}"
             : null;
     }
 }

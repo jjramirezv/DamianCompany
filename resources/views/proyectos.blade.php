@@ -56,45 +56,37 @@
                 @foreach($proyectosOptimizados as $proyecto)
                     @php
                         $descripcion = trim($proyecto->descripcion ?? '');
-                        $descripcionLarga = mb_strlen($descripcion) > 420;
+                        $resumen = trim($proyecto->resumen ?? '') ?: Illuminate\Support\Str::limit($descripcion, 320);
                     @endphp
 
                     <article
                         class="grid items-start gap-8 border-b border-white/10 pb-16 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:gap-14 lg:pb-24"
-                        x-data="{ activo: 0, ampliada: null, expandido: false }"
+                        x-data="{ activo: 0, ampliada: null }"
                         @keydown.escape.window="ampliada = null"
                     >
                         <div class="lg:sticky lg:top-28">
                             <span class="mb-4 block text-[10px] font-bold uppercase tracking-widest text-damian-green">Portafolio Oficial</span>
-                            <h2 class="mb-6 text-3xl font-black leading-tight text-white md:text-4xl">{{ $proyecto->titulo }}</h2>
+                            <h2 class="mb-5 text-2xl font-black leading-tight text-white md:text-3xl">{{ $proyecto->titulo }}</h2>
 
-                            <div class="text-base leading-8 text-damian-gray_light md:text-lg">
-                                <p x-show="!expandido" class="whitespace-pre-line">{{ $descripcionLarga ? Illuminate\Support\Str::limit($descripcion, 420) : $descripcion }}</p>
-                                @if($descripcionLarga)
-                                    <p x-cloak x-show="expandido" class="whitespace-pre-line">{{ $descripcion }}</p>
-                                    <button
-                                        type="button"
-                                        class="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-damian-green transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-damian-green/60"
-                                        @click="expandido = !expandido"
-                                        :aria-expanded="expandido"
-                                    >
-                                        <span x-text="expandido ? 'Ver menos' : 'Ver más'"></span>
-                                        <svg class="h-4 w-4 transition-transform" :class="expandido && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
-                                        </svg>
-                                    </button>
-                                @endif
-                            </div>
+                            <p class="whitespace-pre-line text-base leading-7 text-damian-gray_light">{{ $resumen }}</p>
+
+                            <a href="{{ route('proyectos.show', $proyecto) }}" class="mt-6 inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider text-damian-green transition-colors hover:text-white">
+                                Ver más
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0-7 7m7-7H3" /></svg>
+                            </a>
 
                             <a href="https://wa.me/51964493400" class="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-white/10">
                                 Consultar similar
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0-7 7m7-7H3" /></svg>
+                                
                             </a>
                         </div>
 
                         <div class="min-w-0">
                             <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-[#061923] shadow-2xl">
-                                <div class="flex aspect-[4/3] min-h-[310px] items-center justify-center sm:min-h-[420px]">
+                                <span class="pointer-events-none absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
+                                </span>
+                                <div class="flex aspect-[4/3] min-h-[280px] items-center justify-center sm:min-h-[360px]">
                                     @forelse($proyecto->galeria as $indice => $medio)
                                         @if($medio['tipo'] === 'imagen')
                                             <button
@@ -122,7 +114,7 @@
                             </div>
 
                             @if($proyecto->galeria->count() > 1)
-                                <div class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5" aria-label="Todas las imágenes de {{ $proyecto->titulo }}">
+                                <div class="relative z-20 -mt-24 grid grid-cols-3 gap-2 bg-gradient-to-t from-black/90 via-black/65 to-transparent p-3 pt-10 sm:grid-cols-5" aria-label="Todas las imágenes de {{ $proyecto->titulo }}">
                                     @foreach($proyecto->galeria as $indice => $medio)
                                         <button
                                             type="button"

@@ -30,13 +30,45 @@ class ProyectoResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+
+                Forms\Components\Textarea::make('resumen')
+                    ->label('Resumen para la vista previa')
+                    ->rows(4)
+                    ->maxLength(500)
+                    ->helperText('Texto breve que aparecerá en el listado de proyectos. Si lo dejas vacío, se generará desde la descripción completa.')
+                    ->columnSpanFull(),
                     
                 Forms\Components\Textarea::make('descripcion')
-                    ->label('Descripción del proyecto')
+                    ->label('Contenido completo del proyecto')
                     ->required()
-                    ->rows(10)
-                    ->helperText('Puedes escribir una descripción extensa. En la web se mostrará resumida con la opción “Ver más”.')
+                    ->rows(16)
+                    ->helperText('Este contenido se mostrará únicamente en la página de detalle del proyecto.')
                     ->columnSpanFull(),
+
+                Forms\Components\Section::make('Apartados adicionales')
+                    ->description('Agrega bloques con título y contenido para explicar etapas, objetivos, resultados u otros datos del proyecto.')
+                    ->schema([
+                        Forms\Components\Repeater::make('secciones')
+                            ->label('Secciones del proyecto')
+                            ->schema([
+                                Forms\Components\TextInput::make('titulo')
+                                    ->label('Título del apartado')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('contenido')
+                                    ->label('Contenido')
+                                    ->required()
+                                    ->rows(7),
+                            ])
+                            ->addActionLabel('Agregar otro apartado')
+                            ->itemLabel(fn (array $state): ?string => $state['titulo'] ?? 'Nuevo apartado')
+                            ->reorderable()
+                            ->collapsible()
+                            ->cloneable()
+                            ->defaultItems(0)
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
 
                 Forms\Components\Section::make('Galería multimedia')
                     ->description('Sube hasta 5 imágenes. La primera será la portada y puedes arrastrarlas para cambiar el orden.')
@@ -77,7 +109,13 @@ class ProyectoResource extends Resource
                                     };
                                 },
                             ])
-                            ->dehydrateStateUsing(fn (?string $state): ?string => $state ? trim($state) : null)
+                            ->dehydrateStateUsing(function (?string $state): ?string {
+                                if (blank($state)) {
+                                    return null;
+                                }
+
+                                return (new Proyecto(['video_url' => trim($state)]))->youtube_embed_url;
+                            })
                             ->columnSpanFull(),
                     ]),
             ]);
