@@ -299,12 +299,12 @@
                 </div>
 
                 <img
-                    src="{{ asset('img/hero-equipos-agricolas.png') }}"
+                    src="{{ asset('img/hero-equipos-agricolas-transparent.png') }}"
                     alt="Motocultor Damian acompañado de una motoguadaña y una mochila fumigadora"
-                    width="1536"
-                    height="1024"
+                    width="1015"
+                    height="1017"
                     fetchpriority="high"
-                    class="hero-product-float relative top-10 z-10 h-auto w-full max-w-[620px] object-contain"
+                    class="hero-product-float relative z-10 h-auto w-full max-w-[450px] object-contain top-10"
                 >
             </div>
         </div>
