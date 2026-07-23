@@ -88,7 +88,14 @@
 
             <article class="lg:sticky lg:top-28">
                 <h2 class="mb-4 text-xl font-black text-white">Acerca del proyecto</h2>
-                <div class="whitespace-pre-line text-base leading-7 text-damian-gray_light">{{ $proyecto->descripcion }}</div>
+                @php($descripcionConFormato = $proyecto->descripcion !== strip_tags($proyecto->descripcion ?? ''))
+                <div class="text-base leading-7 text-damian-gray_light [&_a]:text-damian-green [&_a]:underline [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-damian-green [&_blockquote]:pl-4 [&_h1]:mb-4 [&_h1]:mt-7 [&_h1]:text-3xl [&_h1]:font-black [&_h1]:leading-tight [&_h1]:text-white [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:text-2xl [&_h2]:font-black [&_h2]:leading-tight [&_h2]:text-white [&_h3]:mb-2 [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-white [&_li]:mb-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6">
+                    @if($descripcionConFormato)
+                        {!! $proyecto->descripcion !!}
+                    @else
+                        {!! nl2br(e($proyecto->descripcion)) !!}
+                    @endif
+                </div>
                 <a href="https://wa.me/51964493400?text={{ urlencode('Hola, quisiera consultar sobre un proyecto similar a: '.$proyecto->titulo) }}" target="_blank" rel="noopener noreferrer" class="mt-7 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-[#25D366]/15 transition hover:-translate-y-0.5 hover:bg-[#20bd5a]">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2a9.84 9.84 0 0 0-8.42 14.93L2.05 22l5.2-1.53A9.95 9.95 0 1 0 12.04 2Zm0 17.95a8 8 0 0 1-4.08-1.12l-.3-.18-3.08.91.92-3-.2-.31a7.93 7.93 0 1 1 6.74 3.7Zm4.36-5.94c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19a7.2 7.2 0 0 1-1.33-1.65c-.14-.24-.01-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg>
                     Consultar por WhatsApp

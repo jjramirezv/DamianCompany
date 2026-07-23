@@ -38,11 +38,11 @@ class ProyectoResource extends Resource
                     ->helperText('Texto breve que aparecerá en el listado de proyectos. Si lo dejas vacío, se generará desde la descripción completa.')
                     ->columnSpanFull(),
                     
-                Forms\Components\Textarea::make('descripcion')
+                Forms\Components\ViewField::make('descripcion')
                     ->label('Contenido completo del proyecto')
                     ->required()
-                    ->rows(16)
-                    ->helperText('Este contenido se mostrará únicamente en la página de detalle del proyecto.')
+                    ->view('filament.forms.components.mini-rich-editor')
+                    ->helperText('Da formato al texto con la barra del editor. Este contenido se mostrará únicamente en la página de detalle del proyecto.')
                     ->columnSpanFull(),
 
                 Forms\Components\Section::make('Apartados adicionales')

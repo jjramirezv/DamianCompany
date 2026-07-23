@@ -55,7 +55,7 @@
             <div class="space-y-16 lg:space-y-24">
                 @foreach($proyectosOptimizados as $proyecto)
                     @php
-                        $descripcion = trim($proyecto->descripcion ?? '');
+                        $descripcion = trim(strip_tags($proyecto->descripcion ?? ''));
                         $resumen = trim($proyecto->resumen ?? '') ?: Illuminate\Support\Str::limit($descripcion, 320);
                     @endphp
 
