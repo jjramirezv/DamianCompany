@@ -82,30 +82,30 @@
                         </div>
 
                         <div class="min-w-0">
-                            <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-[#061923] shadow-2xl">
-                                <span class="pointer-events-none absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
-                                </span>
-                                <div class="flex aspect-[4/3] min-h-[280px] items-center justify-center sm:min-h-[360px]">
+                            <div class="relative flex w-full justify-center">
+                                <div class="w-full">
                                     @forelse($proyecto->galeria as $indice => $medio)
                                         @if($medio['tipo'] === 'imagen')
                                             <button
                                                 x-cloak
                                                 x-show="activo === {{ $indice }}"
                                                 type="button"
-                                                class="absolute inset-0 flex h-full w-full cursor-zoom-in items-center justify-center p-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-damian-green sm:p-4"
+                                                class="group/media relative mx-auto block w-fit max-w-full cursor-zoom-in overflow-hidden rounded-3xl border border-white/10 bg-[#061923] shadow-2xl focus:outline-none focus:ring-2 focus:ring-damian-green"
                                                 @click="ampliada = {{ $indice }}"
                                                 aria-label="Ampliar imagen {{ $indice + 1 }} de {{ $proyecto->titulo }}"
                                             >
-                                                <img src="{{ $medio['url'] }}" alt="{{ $proyecto->titulo }} — imagen {{ $indice + 1 }}" loading="lazy" class="max-h-full max-w-full object-contain" />
+                                                <img src="{{ $medio['url'] }}" alt="{{ $proyecto->titulo }} — imagen {{ $indice + 1 }}" loading="lazy" class="block h-auto max-h-[78vh] max-w-full object-contain transition-transform duration-500 group-hover/media:scale-[1.01]" />
+                                                <span class="pointer-events-none absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
+                                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
+                                                </span>
                                             </button>
                                         @else
-                                            <div x-cloak x-show="activo === {{ $indice }}" class="absolute inset-0 flex items-center bg-black">
-                                                <iframe class="aspect-video w-full" src="{{ $medio['url'] }}" title="Video de {{ $proyecto->titulo }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                            <div x-cloak x-show="activo === {{ $indice }}" class="aspect-video w-full overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
+                                                <iframe class="h-full w-full" src="{{ $medio['url'] }}" title="Video de {{ $proyecto->titulo }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                                             </div>
                                         @endif
                                     @empty
-                                        <div class="flex h-full w-full flex-col items-center justify-center gap-3 text-white/30">
+                                        <div class="flex min-h-[280px] w-full flex-col items-center justify-center gap-3 rounded-3xl border border-white/10 bg-[#061923] text-white/30">
                                             <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m3 16 5-5 4 4 3-3 6 6M5 20h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" /></svg>
                                             <span class="text-sm">Sin multimedia</span>
                                         </div>
@@ -114,7 +114,7 @@
                             </div>
 
                             @if($proyecto->galeria->count() > 1)
-                                <div class="relative z-20 -mt-24 grid grid-cols-3 gap-2 bg-gradient-to-t from-black/90 via-black/65 to-transparent p-3 pt-10 sm:grid-cols-5" aria-label="Todas las imágenes de {{ $proyecto->titulo }}">
+                                <div class="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5" aria-label="Todas las imágenes de {{ $proyecto->titulo }}">
                                     @foreach($proyecto->galeria as $indice => $medio)
                                         <button
                                             type="button"

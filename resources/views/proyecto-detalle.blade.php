@@ -29,29 +29,28 @@
     <main class="mx-auto max-w-6xl px-6 py-10 lg:py-16" x-data="{ activo: 0, ampliada: null }" @keydown.escape.window="ampliada = null">
         <section class="grid items-start gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)] lg:gap-10">
             <div class="min-w-0">
-                <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-[#061923] shadow-2xl">
-                    <div class="relative flex aspect-[4/3] min-h-[300px] items-center justify-center sm:min-h-[420px]">
+                <div class="relative w-full">
+                    <div class="w-full">
                         @forelse($galeria as $indice => $medio)
                             @if($medio['tipo'] === 'imagen')
-                                <button x-cloak x-show="activo === {{ $indice }}" type="button" class="absolute inset-0 flex h-full w-full cursor-zoom-in items-center justify-center p-3 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-damian-green sm:p-6" @click="ampliada = {{ $indice }}" aria-label="Ampliar imagen {{ $indice + 1 }}">
-                                    <img src="{{ $medio['url'] }}" alt="{{ $proyecto->titulo }} — imagen {{ $indice + 1 }}" class="max-h-full max-w-full object-contain" />
+                                <button x-cloak x-show="activo === {{ $indice }}" type="button" class="group/media relative mx-auto block w-fit max-w-full cursor-zoom-in overflow-hidden rounded-2xl border border-white/10 bg-[#061923] shadow-2xl focus:outline-none focus:ring-2 focus:ring-damian-green" @click="ampliada = {{ $indice }}" aria-label="Ampliar imagen {{ $indice + 1 }}">
+                                    <img src="{{ $medio['url'] }}" alt="{{ $proyecto->titulo }} — imagen {{ $indice + 1 }}" class="block h-auto max-h-[78vh] max-w-full object-contain transition-transform duration-500 group-hover/media:scale-[1.01]" />
+                                    <span class="pointer-events-none absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
+                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
+                                    </span>
                                 </button>
                             @else
-                                <div x-cloak x-show="activo === {{ $indice }}" class="absolute inset-0 flex items-center bg-black">
-                                    <iframe class="aspect-video w-full" src="{{ $medio['url'] }}" title="Video de {{ $proyecto->titulo }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                <div x-cloak x-show="activo === {{ $indice }}" class="aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+                                    <iframe class="h-full w-full" src="{{ $medio['url'] }}" title="Video de {{ $proyecto->titulo }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                                 </div>
                             @endif
                         @empty
-                            <span class="text-white/30">Sin contenido multimedia</span>
+                            <div class="flex min-h-[300px] items-center justify-center rounded-2xl border border-white/10 bg-[#061923]"><span class="text-white/30">Sin contenido multimedia</span></div>
                         @endforelse
-
-                        <span class="pointer-events-none absolute right-4 top-4 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
-                        </span>
                     </div>
 
                     @if($galeria->count() > 1)
-                        <div class="relative z-20 -mt-20 grid grid-cols-3 gap-2 bg-gradient-to-t from-black/95 via-black/75 to-transparent p-2 pt-8 sm:grid-cols-5">
+                        <div class="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
                             @foreach($galeria as $indice => $medio)
                                 <button type="button" class="relative aspect-[4/3] overflow-hidden border-2 bg-[#061923] transition" :class="activo === {{ $indice }} ? 'border-white opacity-100' : 'border-white/20 opacity-60 hover:opacity-100'" @click="activo = {{ $indice }}; ampliada = null" aria-label="Mostrar {{ $medio['tipo'] === 'video' ? 'video' : 'imagen '.($indice + 1) }}">
                                     @if($medio['tipo'] === 'imagen')
@@ -77,8 +76,8 @@
                             </div>
                         </div>
 
-                        <a href="{{ Storage::disk('cloudinary')->url($proyecto->flujo_tecnico) }}" target="_blank" rel="noopener noreferrer" class="group relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#061923] p-3 shadow-2xl focus:outline-none focus:ring-2 focus:ring-damian-green sm:p-6" aria-label="Abrir el flujo técnico completo en una nueva pestaña">
-                            <img src="{{ Storage::disk('cloudinary')->url($proyecto->flujo_tecnico) }}" alt="Flujo técnico de {{ $proyecto->titulo }}" loading="lazy" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]" />
+                        <a href="{{ Storage::disk('cloudinary')->url($proyecto->flujo_tecnico) }}" target="_blank" rel="noopener noreferrer" class="group relative mx-auto block w-fit max-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#061923] shadow-2xl focus:outline-none focus:ring-2 focus:ring-damian-green" aria-label="Abrir el flujo técnico completo en una nueva pestaña">
+                            <img src="{{ Storage::disk('cloudinary')->url($proyecto->flujo_tecnico) }}" alt="Flujo técnico de {{ $proyecto->titulo }}" loading="lazy" class="block h-auto max-h-[78vh] max-w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]" />
                             <span class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-damian-dark shadow-xl">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-3v6m-3-3h6" /></svg>
                             </span>

@@ -110,15 +110,17 @@
                 <div class="w-full md:w-1/2 relative">
                     <div class="absolute inset-0 bg-damian-blue/20 rounded-[40px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
-                    <div class="relative aspect-video w-full rounded-[40px] overflow-hidden border border-white/10 shadow-2xl bg-damian-card">
-                        @if($servicio->codigo_embed)
+                    @if($servicio->codigo_embed)
+                        <div class="relative aspect-video w-full overflow-hidden rounded-[40px] border border-white/10 bg-damian-card shadow-2xl">
                             <div class="absolute inset-0 w-full h-full contenedor-video">
                                 {!! $servicio->codigo_embed !!}
                             </div>
-                        @elseif($servicio->imagen_url)
-                            <img src="{{ $servicio->imagen_url }}" alt="{{ $servicio->titulo }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-                        @endif
-                    </div>
+                        </div>
+                    @elseif($servicio->imagen_url)
+                        <div class="relative mx-auto w-fit max-w-full overflow-hidden rounded-[40px] border border-white/10 bg-damian-card shadow-2xl">
+                            <img src="{{ $servicio->imagen_url }}" alt="{{ $servicio->titulo }}" loading="lazy" class="block h-auto max-h-[78vh] max-w-full object-contain transition-transform duration-1000 group-hover:scale-[1.02]">
+                        </div>
+                    @endif
                 </div>
             </div>
         @empty
