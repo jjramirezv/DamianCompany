@@ -85,7 +85,7 @@
                             @endif
                             
                             <div class="mt-auto">
-                                <a href="https://wa.me/51964493400?text={{ urlencode('Hola Damian Company, me interesa el equipo destacado: ' . $producto->nombre) }}" 
+                                <a href="https://wa.me/51950705734?text={{ urlencode('Hola Damian Company, me interesa el equipo destacado: ' . $producto->nombre) }}" 
                                    target="_blank" 
                                    class="w-full bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white py-3 rounded-xl transition-all duration-300 border border-[#25D366]/30 hover:border-transparent flex items-center justify-center gap-2 group/btn">
                                     <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">

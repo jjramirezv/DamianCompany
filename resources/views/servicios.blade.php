@@ -103,7 +103,7 @@
                         {{ $servicio->descripcion }}
                     </p>
                     <div class="mt-10">
-                        <a href="https://wa.me/51964493400" class="text-white font-bold border-b-2 border-damian-green pb-1 hover:text-damian-green transition-all">Solicitar presupuesto →</a>
+                        <a href="https://wa.me/51950705734" class="text-white font-bold border-b-2 border-damian-green pb-1 hover:text-damian-green transition-all">Solicitar presupuesto →</a>
                     </div>
                 </div>
 
